@@ -11,8 +11,8 @@ canvas{display:block}
 .hud{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:3}
 .badge{background:rgba(15,22,38,.82);color:#fff;border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);padding:10px 14px;border-radius:16px;font-weight:700;box-shadow:0 8px 24px #0004}
 #hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:4;color:#fff;background:rgba(15,22,38,.78);padding:10px 16px;border-radius:999px;font-size:14px;pointer-events:none;transition:.3s}
-#joystick{position:fixed;bottom:28px;left:28px;width:132px;height:132px;border-radius:50%;background:rgba(20,30,50,.72);border:3px solid rgba(255,255,255,.75);display:block;z-index:20;pointer-events:auto;touch-action:none;box-shadow:0 6px 24px #0008}
-#stick{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px;border-radius:50%;background:#fff;box-shadow:0 4px 14px #0008}
+#joystick{position:fixed;bottom:18px;left:18px;width:140px;height:140px;border-radius:50%;background:transparent;border:0;display:block;z-index:20;pointer-events:auto;touch-action:none}
+#stick{position:absolute;left:50%;top:50%;width:1px;height:1px;margin:-.5px;border-radius:50%;background:transparent;box-shadow:none}
 .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#111827eF,#172554eF);z-index:10;padding:24px}
 .panel{width:min(430px,100%);text-align:center;background:#fffffffa;border-radius:28px;padding:30px 24px;box-shadow:0 24px 80px #0008}
 .panel h1{margin:0 0 10px;font-size:31px;color:#172033}.panel p{color:#5d6678;line-height:1.55;margin:8px 0 22px}
@@ -27,7 +27,7 @@ button:active{transform:scale(.97)}
   <div class="badge">גבינות: <span id="score">0</span></div>
   <div class="badge">שיא: <span id="best">0</span></div>
 </div>
-<div id="hint">הזז את העכבר מהג׳ויסטיק — האצבע נשארת בפינה ולא מסתירה אותו</div>
+<div id="hint">הזז את האצבע בפינה כדי להזיז את העכבר</div>
 <div id="joystick"><div id="stick"></div></div>
 <div id="start" class="overlay">
  <div class="panel">
