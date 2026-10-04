@@ -6,7 +6,7 @@ bench(-5,-4,.1);bench(5,-4,-.1);bench(-5,8,Math.PI/2);bench(5,8,Math.PI/2);bench
 sign("קרוסלה 🎠",0,6);sign("גלגל ענק 🎡",18,-4);sign("רכבת הרים 🎢",-18,-4);sign("דוכן אוכל 🍔",18,16);
 sign("סירות מים 🚤",-18,16);sign("מכוניות מתנגשות 🚗",18,28);sign("מגדל נפילה 🗼",-18,28);
 const treePositions=[[-35,-35],[35,-35],[-35,35],[35,35],[-28,-28],[28,-28],[-28,28],[28,28],[-40,0],[40,0]];
-treePositions.forEach(p=>tree(p[0],p[1]));box(14,2,1,0xe8e0d0,0,2,-45);box(1.1,7,1.4,0xd64c3f,-6.5,3.5,-45);box(1.1,7,1.4,0xd64c3f,6.5,3.5,-45);box(15,1.1,1.5,0x2e5e9e,0,7,-45);box(10,.4,1.8,0xf5d36a,0,5.8,-45);const park=[];const constructionSites=[[-3,-2],[3,-2],[-3,5],[3,5],[-18,-10],[18,-10],[-18,10],[18,10],[-18,25],[18,25],[-8,34],[8,34]];let nextSite=Number(localStorage.nextBuildSite||0),money=Number(localStorage.parkMoney||500),playing=false,incomeTimer=0;const builders=[];const cleaners=[];let customersBought=0;const toilets=[];let parkLevel=1,visitorsServed=0,dayTime=12,weather="sun";const extraVisitors=[];const player={x:0,z:20,rot:0,walk:0};const keys={},joy={active:false,x:0,y:0,sx:0,sy:0};let fly=false,flyHeight=10;const playerGroup=new THREE.Group();scene.add(playerGroup);const birds=[];function makeBird(i){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),new THREE.MeshStandardMaterial({color:0xf1eee5,roughness:.8}));body.scale.set(1.5,.7,.8);g.add(body);for(const side of[-1,1]){const wing=new THREE.Mesh(new THREE.BoxGeometry(.08,.04,.65),new THREE.MeshStandardMaterial({color:0xd7d3c9,roughness:.8}));wing.position.set(side*.28,.03,0);g.add(wing)}g.position.set((i-1.5)*5,8+i%3*1.5,Math.sin(i)*10);scene.add(g);return {obj:g,phase:i*1.7,r:14+i*3,h:7+i%3*2,speed:.35+i*.05}}for(let i=0;i<5;i++)birds.push(makeBird(i));function updateBirds(t){birds.forEach((b,i)=>{const a=t*b.speed+b.phase;b.obj.position.x=Math.cos(a)*b.r;b.obj.position.z=Math.sin(a)*b.r;b.obj.position.y=b.h+Math.sin(t*3+b.phase)*.5;b.obj.rotation.y=-a+Math.PI/2})}
+treePositions.forEach(p=>tree(p[0],p[1]));box(14,2,1,0xe8e0d0,0,2,-45);box(1.1,7,1.4,0xd64c3f,-6.5,3.5,-45);box(1.1,7,1.4,0xd64c3f,6.5,3.5,-45);box(15,1.1,1.5,0x2e5e9e,0,7,-45);box(10,.4,1.8,0xf5d36a,0,5.8,-45);const park=[];const constructionSites=[[-3,-2],[3,-2],[-3,5],[3,5],[-18,-10],[18,-10],[-18,10],[18,10],[-18,25],[18,25],[-8,34],[8,34]];let nextSite=Number(localStorage.nextBuildSite||0),money=Number(localStorage.parkMoney||500),playing=false,incomeTimer=0;const builders=[];const cleaners=[];let customersBought=0;const toilets=[];let parkLevel=1,visitorsServed=0,dayTime=12,weather="sun";const extraVisitors=[];const player={x:0,z:20,rot:0,walk:0};const keys={},joy={active:false,x:0,y:0,sx:0,sy:0};let fly=false,flyHeight=10,constructionCamera=null;const playerGroup=new THREE.Group();scene.add(playerGroup);const birds=[];function makeBird(i){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.SphereGeometry(.22,10,8),new THREE.MeshStandardMaterial({color:0xf1eee5,roughness:.8}));body.scale.set(1.5,.7,.8);g.add(body);for(const side of[-1,1]){const wing=new THREE.Mesh(new THREE.BoxGeometry(.08,.04,.65),new THREE.MeshStandardMaterial({color:0xd7d3c9,roughness:.8}));wing.position.set(side*.28,.03,0);g.add(wing)}g.position.set((i-1.5)*5,8+i%3*1.5,Math.sin(i)*10);scene.add(g);return {obj:g,phase:i*1.7,r:14+i*3,h:7+i%3*2,speed:.35+i*.05}}for(let i=0;i<5;i++)birds.push(makeBird(i));function updateBirds(t){birds.forEach((b,i)=>{const a=t*b.speed+b.phase;b.obj.position.x=Math.cos(a)*b.r;b.obj.position.z=Math.sin(a)*b.r;b.obj.position.y=b.h+Math.sin(t*3+b.phase)*.5;b.obj.rotation.y=-a+Math.PI/2})}
 const roosters=[];function makeRooster(i){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.SphereGeometry(.35,12,10),new THREE.MeshStandardMaterial({color:i%2?0xb83d32:0xd28a38,roughness:.9}));body.scale.set(1.25,.9,1);body.position.y=.45;g.add(body);const head=new THREE.Mesh(new THREE.SphereGeometry(.25,12,10),new THREE.MeshStandardMaterial({color:0xe2a16e,roughness:.9}));head.position.set(0,.9,.22);g.add(head);const comb=new THREE.Mesh(new THREE.SphereGeometry(.12,8,6),new THREE.MeshStandardMaterial({color:0xd52e2e}));comb.position.set(0,1.15,.23);g.add(comb);const tail=new THREE.Mesh(new THREE.ConeGeometry(.28,.65,8),new THREE.MeshStandardMaterial({color:0x493a31}));tail.rotation.x=Math.PI/2;tail.position.set(0,.65,-.48);g.add(tail);g.position.set((i-1)*5,0,18+i*3);scene.add(g);return {obj:g,x:g.position.x,z:g.position.z,tx:g.position.x,tz:g.position.z,s:.65+i*.08,p:i*2}}for(let i=0;i<4;i++)roosters.push(makeRooster(i));function updateRoosters(dt,t){roosters.forEach((r,i)=>{const dx=r.tx-r.x,dz=r.tz-r.z,d=Math.hypot(dx,dz);if(d<.7){const a=Math.random()*Math.PI*2;r.tx=Math.max(-35,Math.min(35,r.x+Math.cos(a)*8));r.tz=Math.max(-35,Math.min(35,r.z+Math.sin(a)*8))}else{r.x+=dx/d*r.s*dt;r.z+=dz/d*r.s*dt;r.obj.rotation.y=Math.atan2(dx,dz);r.obj.position.set(r.x,Math.abs(Math.sin(t*7+r.p))*.025,r.z)}})}
 const visitors=[];
 function makeVisitor(i){
@@ -17,9 +17,9 @@ function makeVisitor(i){
  head.position.y=1.35;head.castShadow=true;g.add(head);
  const hair=new THREE.Mesh(new THREE.SphereGeometry(.23,12,8,0,Math.PI*2,0,Math.PI*.5),new THREE.MeshStandardMaterial({color:i%2?0x2b211b:0x5a3824,roughness:1}));
  hair.position.y=1.42;hair.castShadow=true;g.add(hair);
- g.position.set((i%5-2)*3,0,10+Math.floor(i/5)*6);
+ g.position.set((i%5-2)*1.2,0,-42);
  scene.add(g);
- return {obj:g,x:g.position.x,z:g.position.z,targetX:g.position.x,targetZ:g.position.z,speed:.8+Math.random()*.5,phase:Math.random()*10,ride:null};
+ return {obj:g,x:g.position.x,z:g.position.z,targetX:g.position.x,targetZ:-30,speed:.8+Math.random()*.5,phase:Math.random()*10,ride:null,entered:false};
 }
 for(let i=0;i<12;i++)visitors.push(makeVisitor(i));
 function updateVisitors(dt,t){
@@ -74,6 +74,8 @@ else if(k==="bumper"){for(let i=0;i<6;i++){const a=i*Math.PI/3;g.add(box(3,.25,.
 else if(k==="drop"){g.add(box(.45,7,.45,0x5d6470,0,3.5,0,.6));const top=box(2,.35,2,0xe0a83c,0,7,0,.5);g.add(top);const cabin=box(1,.8,1,0xd64b42,0,4.4,0,.5);g.add(cabin)}
 else if(k==="waterpark"){g.add(box(4,.3,3,0x3e91bd,0,.2,0,.6));const slide=box(.3,2,.3,0xe2b83d,1.2,1,0,.5);slide.rotation.z=-.45;g.add(slide)}else if(k==="pirate"){g.add(box(3,.8,1.3,0x6b3928,0,1,0,.8));const mast=box(.15,3,.15,0x44372d,0,2.3,0,.7);g.add(mast);const sail=box(.08,1.8,1.4,0xe9dfc7,.15,2.6,0,.9);g.add(sail)}else if(k==="ghost"){g.add(box(3,2.2,2.5,0x53456e,0,1.1,0,.7));const roof=box(3.4,.2,2.8,0x272338,0,2.3,0,.7);g.add(roof)}else if(k==="train"){for(let i=-1;i<=1;i++)g.add(box(.9,.7,1, [0xd64c42,0x2e6aa6,0xe5b83b][i+1],i*1.1,.55,0,.6))}else if(k==="shop"){g.add(box(2.5,1.8,2,0xd47d49,0,1,0,.7),box(2.7,.2,2.2,0x4a77a8,0,2,0,.7),box(1,.7,.12,0x25394b,0,1.15,1.02,.4))}else{g.add(box(3.5,2.4,2.5,0xc96d3e,0,1.2,0,.7),box(3.7,.2,2.7,0x6a3928,0,2.5,0,.7),box(1.2,.9,.12,0x25394b,0,1.4,1.28,.4))}buildParent=null;scene.add(g);return g}function makeConstructionSite(i){
  const [x,z]=constructionSites[i],g=new THREE.Group();g.position.set(x,.03,z);
+ const pad=new THREE.Mesh(new THREE.BoxGeometry(4.2,.12,4.2),new THREE.MeshStandardMaterial({color:0xf2c94c,roughness:.65}));
+ pad.position.y=.06;g.add(pad);
  const base=new THREE.Mesh(new THREE.CylinderGeometry(2.1,.1,16),new THREE.MeshStandardMaterial({color:0xd7a52b,roughness:.8}));
  base.scale.y=.35;g.add(base);
  const ring=new THREE.Mesh(new THREE.TorusGeometry(2.05,.07,8,32),new THREE.MeshStandardMaterial({color:0x6b4b16}));
@@ -114,11 +116,25 @@ function nearestOpenSite(){
 function startConstruction(r){
  r.building=true;r.buildStart=performance.now()/1000;r.buildUntil=r.buildStart+r.buildTime;
  r.obj.visible=false;
+ const site=siteObjects[constructionSites.findIndex(s=>s[0]===r.x&&s[1]===r.z)];
+ if(site){
+  const pay=new THREE.Group();pay.name="payment";
+  const coin=new THREE.Mesh(new THREE.CylinderGeometry(.45,.45,.12,20),new THREE.MeshStandardMaterial({color:0xffd21f,metalness:.7,roughness:.25}));
+  coin.position.y=.35;pay.add(coin);
+  const barBg=new THREE.Mesh(new THREE.BoxGeometry(3,.18,.18),new THREE.MeshBasicMaterial({color:0x333333}));
+  barBg.position.set(0,2.8,0);pay.add(barBg);
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(0.02,.2,.2),new THREE.MeshBasicMaterial({color:0x31d17c}));
+  bar.position.set(-1.49,2.8,.01);bar.name="progress";pay.add(bar);
+  site.add(pay);r.payment=pay;
+ }
+ constructionCamera={x:r.x+7,z:r.z+7,y:5,target:r}; 
  const free=builders.find(b=>!b.job);
  if(free){free.job=r;free.targetX=r.x;free.targetZ=r.z;}
 }
 function finishConstruction(r){
  r.building=false;r.obj.visible=true;
+ if(r.payment){r.payment.parent.remove(r.payment);r.payment=null}
+ constructionCamera=null;
  if(r.builder){r.builder.job=null;r.builder=null}
  localStorage.parkRides=JSON.stringify(park.map(({obj,...q})=>q));
  toast("הבנייה הסתיימה — "+({carousel:"הקרוסלה",wheel:"גלגל הענק",coaster:"רכבת ההרים",food:"דוכן האוכל",boats:"הסירות",bumper:"המכוניות",drop:"מגדל הנפילה",waterpark:"פארק המים",pirate:"ספינת הפיראטים",ghost:"בית הרוחות",train:"רכבת הילדים",shop:"חנות הגלידה"}[r.kind]||"המתקן")+" מוכן!");
@@ -131,8 +147,9 @@ buyBuilder.onclick=()=>{if(money<250)return toast("אין מספיק כסף לב
  if(site<0)return toast("לך קודם לאתר הבנייה המסומן");
  if(site>nextSite)return toast("צריך לפתוח את אתר הבנייה הקודם");
  const cost=+b.dataset.cost;if(money<cost)return toast("אין מספיק כסף");
+ if(Math.hypot(player.x-x,player.z-z)>2.25)return toast("עלה על הריבוע הצהוב כדי להתחיל את הבנייה");
  const [x,z]=constructionSites[site],times={carousel:7,wheel:13,coaster:18,food:5,boats:11,bumper:9,drop:15,waterpark:12,pirate:10,ghost:14,train:8,shop:6};
- const r={kind:b.dataset.kind,x,z,building:true,buildTime:times[b.dataset.kind]||10};
+ const r={kind:b.dataset.kind,x,z,building:true,buildTime:times[b.dataset.kind]||10,cost};
  money-=cost;park.push({...r,obj:makeRide(r.kind,x,z)});startConstruction(park[park.length-1]);
  if(site===nextSite){nextSite++;localStorage.nextBuildSite=nextSite}
  localStorage.parkMoney=money;localStorage.parkRides=JSON.stringify(park.map(({obj,...q})=>q));
@@ -149,7 +166,20 @@ buyBuilder.onclick=()=>{if(money<250)return toast("אין מספיק כסף לב
  // Customers pay at food/ice-cream shops and after rides.
  visitors.forEach((v,i)=>{
   if(v.ride && Math.random()<dt*.055){const sale=3+Math.floor(Math.random()*5);money+=sale;customersBought++;localStorage.parkMoney=money}
- });park.forEach((r,i)=>{if(!r.obj)return;const q=r.obj;if(r.kind==="wheel"){const w=q.children.find(c=>c.geometry&&c.geometry.type==="TorusGeometry");if(w)w.rotation.x+=dt*.9}if(r.kind==="carousel")q.rotation.y+=dt*1.2;if(r.kind==="boats")q.rotation.y+=dt*.35;if(r.kind==="bumper")q.rotation.y+=dt*.18;if(r.kind==="drop"){const cab=q.children[q.children.length-1];if(cab)cab.position.y=4.4+Math.sin(t/1000*1.7+i)*2.2}});let x=joy.x,y=joy.y;if(keys.w||keys.arrowup)y=-1;if(keys.s||keys.arrowdown)y=1;if(keys.a||keys.arrowleft)x=-1;if(keys.d||keys.arrowright)x=1;const l=Math.hypot(x,y);if(l>.05){x/=l;y/=l;const speed=(fly?9:5.8)*dt;player.x+=x*speed;player.z+=y*speed;player.x=Math.max(-42,Math.min(42,player.x));player.z=Math.max(-40,Math.min(40,player.z));player.rot=Math.atan2(x,y);player.walk+=dt*13}if(fly){if(keys[" " ]||keys.q)flyHeight+=8*dt;if(keys.shift)flyHeight-=8*dt;flyHeight=Math.max(3,Math.min(35,flyHeight))}else flyHeight=2;playerGroup.position.set(player.x,fly?flyHeight-2:0,player.z);playerGroup.rotation.y=player.rot;body.position.y=1.05+Math.abs(Math.sin(player.walk))*.045;const distance=fly?16:12,height=fly?flyHeight+5:7;const desired=new THREE.Vector3(player.x-Math.sin(player.rot)*distance,height,player.z-Math.cos(player.rot)*distance);camera.position.lerp(desired,.10);camera.lookAt(player.x,fly?flyHeight:1.15,player.z);incomeTimer+=dt;if(incomeTimer>=5){incomeTimer-=5;const activeRides=park.filter(r=>!r.building).length;
+ });park.forEach((r,i)=>{if(!r.obj)return;const q=r.obj;if(r.kind==="wheel"){const w=q.children.find(c=>c.geometry&&c.geometry.type==="TorusGeometry");if(w)w.rotation.x+=dt*.9}if(r.kind==="carousel")q.rotation.y+=dt*1.2;if(r.kind==="boats")q.rotation.y+=dt*.35;if(r.kind==="bumper")q.rotation.y+=dt*.18;if(r.kind==="drop"){const cab=q.children[q.children.length-1];if(cab)cab.position.y=4.4+Math.sin(t/1000*1.7+i)*2.2}});let x=joy.x,y=joy.y;if(keys.w||keys.arrowup)y=-1;if(keys.s||keys.arrowdown)y=1;if(keys.a||keys.arrowleft)x=-1;if(keys.d||keys.arrowright)x=1;const l=Math.hypot(x,y);if(l>.05){x/=l;y/=l;const speed=(fly?9:5.8)*dt;player.x+=x*speed;player.z+=y*speed;player.x=Math.max(-42,Math.min(42,player.x));player.z=Math.max(-40,Math.min(40,player.z));player.rot=Math.atan2(x,y);player.walk+=dt*13}if(fly){if(keys[" " ]||keys.q)flyHeight+=8*dt;if(keys.shift)flyHeight-=8*dt;flyHeight=Math.max(3,Math.min(35,flyHeight))}else flyHeight=2;playerGroup.position.set(player.x,fly?flyHeight-2:0,player.z);playerGroup.rotation.y=player.rot;body.position.y=1.05+Math.abs(Math.sin(player.walk))*.045;const distance=fly?16:12,height=fly?flyHeight+5:7;let desired;
+ if(constructionCamera){
+  desired=new THREE.Vector3(constructionCamera.x,constructionCamera.y,constructionCamera.z);
+  camera.position.lerp(desired,.06);
+  camera.lookAt(constructionCamera.target.x,1.2,constructionCamera.target.z);
+  if(constructionCamera.target.payment){
+   const p=constructionCamera.target.payment.getObjectByName("progress");
+   if(p){const q=Math.max(.02,Math.min(1,(t/1000-constructionCamera.target.buildStart)/constructionCamera.target.buildTime));p.scale.x=q;p.position.x=-1.5+1.5*q}
+  }
+ }else{
+  desired=new THREE.Vector3(player.x-Math.sin(player.rot)*distance,height,player.z-Math.cos(player.rot)*distance);
+  camera.position.lerp(desired,.10);
+  camera.lookAt(player.x,fly?flyHeight:1.15,player.z);
+ }incomeTimer+=dt;if(incomeTimer>=5){incomeTimer-=5;const activeRides=park.filter(r=>!r.building).length;
 const visitors=12+park.length*4;
 const baseIncome=18+Math.min(42,Math.floor(visitors*.7));
 const rideIncome=activeRides*7;
