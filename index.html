@@ -133,6 +133,7 @@ document.getElementById('best').textContent=best;
 const keys={};
 const joystick=document.getElementById('joystick'), stick=document.getElementById('stick');
 let joystickActive=false;
+const joystickVector=new THREE.Vector2();
 function updateJoystick(e){
  const r=joystick.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
  let dx=e.clientX-cx, dy=e.clientY-cy, max=35, len=Math.hypot(dx,dy);
@@ -144,7 +145,7 @@ function updateJoystick(e){
   target.copy(mouse.position).add(move.normalize().multiplyScalar(3+power*2.5));
  }
 }
-function resetJoystick(){joystickActive=false;stick.style.transform='translate(0,0)';}
+function resetJoystick(){joystickActive=false;joystickVector.set(0,0);stick.style.transform='translate(0,0)';}
 joystick.addEventListener('pointerdown',e=>{if(!playing)return;joystickActive=true;joystick.setPointerCapture(e.pointerId);updateJoystick(e);});
 joystick.addEventListener('pointermove',e=>{if(joystickActive&&playing)updateJoystick(e);});
 joystick.addEventListener('pointerup',resetJoystick);
@@ -161,10 +162,8 @@ function animate(){
  if(playing){
   const move=new THREE.Vector3();
   if(keys.w||keys.arrowup)move.z-=1;if(keys.s||keys.arrowdown)move.z+=1;if(keys.a||keys.arrowleft)move.x-=1;if(keys.d||keys.arrowright)move.x+=1;
-  if(move.lengthSq())target.copy(mouse.position).add(move.normalize().multiplyScalar(3));
-  const dir=target.clone().sub(mouse.position); dir.y=0;
-  const dist=dir.length();
-  if(dist>.12){dir.normalize(); mouse.position.addScaledVector(dir,5.2*dt); mouse.rotation.y=Math.atan2(dir.x,-dir.z);}
+  if(joystickActive && joystickVector.lengthSq()>0.0025){move.x=joystickVector.x;move.z=joystickVector.y;}
+  if(move.lengthSq()>0){move.normalize(); mouse.position.addScaledVector(move,5.2*dt); mouse.rotation.y=Math.atan2(move.x,-move.z);}
   mouse.position.x=THREE.MathUtils.clamp(mouse.position.x,-12.5,12.5);mouse.position.z=THREE.MathUtils.clamp(mouse.position.z,-12.5,12.5);
   const chase=mouse.position.clone().sub(cat.position);chase.y=0;
   if(chase.length()>.02){chase.normalize();cat.position.addScaledVector(chase,2.55*dt);cat.rotation.y=Math.atan2(chase.x,-chase.z);}
@@ -183,7 +182,7 @@ function startGame(){
  score=0;document.getElementById('score').textContent=0;cat.position.set(-7,0,-5);mouse.position.set(0,0,5);target.copy(mouse.position);
  cheeses.forEach(c=>c.visible=true);playing=true;
  document.getElementById('start').classList.add('hidden');document.getElementById('gameover').classList.add('hidden');
- document.getElementById('hint').textContent='השתמש בג׳ויסטיק בפינה כדי שהאצבע לא תסתיר את העכבר';
+ document.getElementById('hint').textContent='הזז את האצבע בפינה כדי להזיז את העכבר';
 }
 function endGame(){
  if(!playing)return;playing=false;
