@@ -147,8 +147,8 @@ buyBuilder.onclick=()=>{if(money<250)return toast("אין מספיק כסף לב
  if(site<0)return toast("לך קודם לאתר הבנייה המסומן");
  if(site>nextSite)return toast("צריך לפתוח את אתר הבנייה הקודם");
  const cost=+b.dataset.cost;if(money<cost)return toast("אין מספיק כסף");
- if(Math.hypot(player.x-x,player.z-z)>2.25)return toast("עלה על הריבוע הצהוב כדי להתחיל את הבנייה");
  const [x,z]=constructionSites[site],times={carousel:7,wheel:13,coaster:18,food:5,boats:11,bumper:9,drop:15,waterpark:12,pirate:10,ghost:14,train:8,shop:6};
+ if(Math.hypot(player.x-x,player.z-z)>2.25)return toast("עלה על הריבוע הצהוב כדי להתחיל את הבנייה");
  const r={kind:b.dataset.kind,x,z,building:true,buildTime:times[b.dataset.kind]||10,cost};
  money-=cost;park.push({...r,obj:makeRide(r.kind,x,z)});startConstruction(park[park.length-1]);
  if(site===nextSite){nextSite++;localStorage.nextBuildSite=nextSite}
