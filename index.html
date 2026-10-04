@@ -78,32 +78,32 @@ const grid=new THREE.GridHelper(arena,28,0xffffff,0x9bd38d); grid.position.y=.01
 function makeCharacter(type){
  const g=new THREE.Group();
  const isMouse=type==='mouse';
- const bodyMat=new THREE.MeshStandardMaterial({color:isMouse?0x9da3ad:0xb46a3f,roughness:.82,metalness:0});
- const bellyMat=new THREE.MeshStandardMaterial({color:isMouse?0xe9c8b6:0xe8c2a4,roughness:.9});
- const pinkMat=new THREE.MeshStandardMaterial({color:isMouse?0xf09aa7:0xe3a6a0,roughness:.75});
+ const bodyMat=new THREE.MeshStandardMaterial({color:isMouse?0x9da3ad:0xb8753f,roughness:.82,metalness:0});
+ const bellyMat=new THREE.MeshStandardMaterial({color:isMouse?0xe9c8b6:0xf1c7a5,roughness:.9});
+ const pinkMat=new THREE.MeshStandardMaterial({color:isMouse?0xf09aa7:0xe5a09a,roughness:.75});
  const darkMat=new THREE.MeshStandardMaterial({color:0x17151a,roughness:.35});
  const whiteMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.4});
  const body=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.72:1.05,28,20),bodyMat);
  body.scale.set(isMouse?1.18:1.15,isMouse?.78:.82,isMouse?1.52:1.42); body.position.y=.82; body.castShadow=true; g.add(body);
  const head=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.58:.82,28,20),bodyMat);
- head.position.set(0,isMouse?1.16:1.18,-.78); head.scale.set(1.03,1,1.05); head.castShadow=true; g.add(head);
+ head.position.set(0,isMouse?1.16:1.28,-.82); head.scale.set(1.03,1,1.05); head.castShadow=true; g.add(head);
  const muzzle=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.34:.42,20,14),bellyMat);
- muzzle.scale.set(1,.72,.72); muzzle.position.set(0,isMouse?1.03:1.12,-1.22); muzzle.castShadow=true; g.add(muzzle);
+ muzzle.scale.set(1,.72,.72); muzzle.position.set(0,isMouse?1.03:1.18,-1.30); muzzle.castShadow=true; g.add(muzzle);
  const nose=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.10:.12,14,10),pinkMat);
- nose.scale.set(1,.75,1); nose.position.set(0,isMouse?1.08:1.15,-1.50); g.add(nose);
+ nose.scale.set(1,.75,1); nose.position.set(0,isMouse?1.08:1.22,-1.60); g.add(nose);
  const earMat=isMouse?pinkMat:bodyMat;
  const ears=[];
  for(const x of [-1,1]){
   const outer=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.28:.34,20,14),bodyMat);
-  outer.scale.set(.72,1,.45); outer.position.set(x*(isMouse?.40:.55),isMouse?1.63:1.75,-.78); outer.castShadow=true; g.add(outer);
+  outer.scale.set(.72,1,.45); outer.position.set(x*(isMouse?.40:.58),isMouse?1.63:1.82,-.82); outer.castShadow=true; g.add(outer);
   const inner=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.18:.22,18,12),earMat);
-  inner.scale.set(.72,1,.4); inner.position.set(x*(isMouse?.40:.55),isMouse?1.63:1.75,-1.02); g.add(inner);
+  inner.scale.set(.72,1,.4); inner.position.set(x*(isMouse?.40:.58),isMouse?1.63:1.82,-1.08); g.add(inner);
   ears.push(outer);
  }
  const eyes=[];
  for(const x of [-1,1]){
   const eye=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.105:.13,16,12),darkMat);
-  eye.position.set(x*(isMouse?.23:.30),isMouse?1.30:1.38,-1.25); eye.castShadow=true; g.add(eye);
+  eye.position.set(x*(isMouse?.23:.31),isMouse?1.30:1.47,-1.38); eye.castShadow=true; g.add(eye);
   if(isMouse){
    const glint=new THREE.Mesh(new THREE.SphereGeometry(.035,8,6),whiteMat);
    glint.position.set(x*.23-.025,1.335,-1.335); g.add(glint);
@@ -132,8 +132,8 @@ function makeCharacter(type){
   tail.rotation.y=Math.PI/2; tail.position.set(0,.62,1.48); tail.castShadow=true; g.add(tail);
   g.userData.tail=tail;
  }else{
-  const tail=new THREE.Mesh(new THREE.CylinderGeometry(.13,.21,1.8,14),bodyMat);
-  tail.position.set(0,.88,1.48); tail.rotation.x=-.55; tail.castShadow=true; g.add(tail);
+  const tail=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.95,8,16),bodyMat);
+  tail.position.set(0,1.0,1.55); tail.rotation.x=-.72; tail.castShadow=true; g.add(tail);
   g.userData.tail=tail;
  }
  g.userData.legs=legs; g.userData.phase=Math.random()*Math.PI*2; g.userData.body=body;
@@ -235,7 +235,7 @@ function animate(){
    chase.normalize();
    const catSpeed=3.35;
    cat.position.addScaledVector(chase,catSpeed*dt);
-   cat.rotation.y=Math.atan2(-chase.x,-chase.z);
+   cat.rotation.y=Math.atan2(chase.x,-chase.z);
    const catTime=performance.now()*.014;
    const catSwing=Math.sin(catTime)*.42;
    const catLegs=cat.userData.legs||[];
