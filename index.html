@@ -3,275 +3,135 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>מרדף החתול והעכבר</title>
+<title>בונה פארק</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101522;font-family:Arial,sans-serif;touch-action:none}
-#game{position:fixed;inset:0}
-canvas{display:block}
-.hud{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:3}
-.badge{background:rgba(15,22,38,.82);color:#fff;border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);padding:10px 14px;border-radius:16px;font-weight:700;box-shadow:0 8px 24px #0004}
-#hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:4;color:#fff;background:rgba(15,22,38,.78);padding:10px 16px;border-radius:999px;font-size:14px;pointer-events:none;transition:.3s}
-#joystick{position:fixed;bottom:0;left:0;width:210px;height:210px;background:transparent;border:0;display:block;z-index:20;pointer-events:auto;touch-action:none}
-#stick{display:none}
-.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#111827eF,#172554eF);z-index:10;padding:24px}
-.panel{width:min(430px,100%);text-align:center;background:#fffffffa;border-radius:28px;padding:30px 24px;box-shadow:0 24px 80px #0008}
-.panel h1{margin:0 0 10px;font-size:31px;color:#172033}.panel p{color:#5d6678;line-height:1.55;margin:8px 0 22px}
-button{border:0;border-radius:16px;padding:14px 22px;font-size:17px;font-weight:800;background:#f4b400;color:#241900;cursor:pointer;box-shadow:0 8px 20px #f4b40055}
-button:active{transform:scale(.97)}
-.hidden{display:none!important}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#10233a;font-family:Arial,sans-serif;touch-action:none}
+#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(150deg,#10233af2,#244e69f2);z-index:30}
+.card{width:min(430px,100%);background:#fff;border-radius:28px;padding:28px 22px;text-align:center;box-shadow:0 24px 70px #0008}
+.logo{font-size:70px;margin-bottom:5px}.card h1{margin:4px 0 8px;font-size:32px;color:#172437}.card p{color:#647184;line-height:1.5;margin:8px 0 20px}
+button{width:100%;border:0;border-radius:16px;padding:14px;margin:6px 0;font-size:17px;font-weight:800;background:#ffb51b;color:#2a1a00;box-shadow:0 8px 20px #0002}
+button.secondary{background:#eaf0f5;color:#243449}.hidden{display:none!important}
+input{width:100%;border:1px solid #d5dce5;border-radius:14px;padding:14px;margin:6px 0;font-size:16px;text-align:right;outline:0}
+#hud{position:fixed;top:12px;left:12px;right:12px;display:flex;gap:8px;z-index:10;pointer-events:none}
+.badge{background:#10233ae8;color:#fff;border:1px solid #ffffff2c;padding:10px 13px;border-radius:15px;font-weight:800}
+#buildBar{position:fixed;bottom:10px;left:10px;right:10px;z-index:12;display:flex;gap:7px;overflow-x:auto;padding:4px}
+.build{min-width:92px;background:#ffffffef;border-radius:16px;padding:8px;text-align:center;box-shadow:0 8px 24px #0003;pointer-events:auto}
+.build b{display:block;font-size:24px}.build span{font-size:12px;font-weight:700;color:#405065}
+#settingsBtn{position:fixed;top:12px;right:12px;z-index:14;width:auto;padding:10px 13px;margin:0;background:#ffffffea;color:#25364b;box-shadow:0 6px 18px #0003}
+#joystick{position:fixed;left:0;bottom:0;width:210px;height:210px;z-index:15;touch-action:none}
+#joyBase{position:absolute;left:35px;bottom:35px;width:125px;height:125px;border-radius:50%;background:#172b40aa;border:2px solid #ffffff55}
+#joyKnob{position:absolute;left:72px;bottom:72px;width:51px;height:51px;border-radius:50%;background:#ffb51b;border:3px solid #fff;box-shadow:0 5px 16px #0005}
+#toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:20;background:#10233aeF;color:#fff;padding:11px 17px;border-radius:999px;font-weight:700;opacity:0;transition:.2s;pointer-events:none}
 </style>
 </head>
 <body>
 <div id="game"></div>
-<div class="hud">
-  <div class="badge">גבינות: <span id="score">0</span></div>
-  <div class="badge">שיא: <span id="best">0</span></div>
+<div id="hud" class="hidden"><div class="badge">💰 כסף: <span id="money">500</span></div><div class="badge">🎢 מתקנים: <span id="rides">0</span></div></div>
+<button id="settingsBtn" class="hidden">⚙️ הגדרות</button>
+<div id="buildBar" class="hidden">
+ <button class="build" data-cost="100" data-kind="carousel"><b>🎠</b><span>קרוסלה · $100</span></button>
+ <button class="build" data-cost="180" data-kind="swing"><b>🎡</b><span>נדנדה · $180</span></button>
+ <button class="build" data-cost="300" data-kind="coaster"><b>🎢</b><span>רכבת · $300</span></button>
+ <button class="build" data-cost="80" data-kind="food"><b>🍔</b><span>דוכן · $80</span></button>
 </div>
-<div id="hint">החלק את האצבע בפינה — העכבר ינוע לפי כיוון ההחלקה</div>
-<div id="joystick"><div id="stick"></div></div>
-<div id="start" class="overlay">
- <div class="panel">
-  <div style="font-size:64px">🐭 🧀 🐱</div>
-  <h1>מרדף החתול והעכבר</h1>
-  <p>אתה העכבר. אסוף את הגבינות הצהובות בזירה התלת־ממדית — והתחמק מהחתול שרודף אחריך.</p>
-  <button id="startBtn">התחל משחק</button>
- </div>
-</div>
-<div id="gameover" class="overlay hidden">
- <div class="panel">
-  <div style="font-size:58px">🐱💨🐭</div>
-  <h1>החתול תפס אותך!</h1>
-  <p>אספת <b id="finalScore">0</b> גבינות.</p>
-  <button id="restartBtn">שחק שוב</button>
- </div>
-</div>
+<div id="joystick" class="hidden"><div id="joyBase"></div><div id="joyKnob"></div></div>
+<div id="toast"></div>
 
-<script type="importmap">
-{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"}}
-</script>
-<script type="module">
-import * as THREE from 'three';
+<div id="welcome" class="screen"><div class="card">
+ <div class="logo">🎡</div><h1>בונה פארק</h1><p>בנה פארק שעשועים משלך, הרוויח כסף מהמבקרים והרחב אותו עם מתקנים חדשים.</p>
+ <button id="goLogin">כניסה למשחק</button>
+ <button id="guest" class="secondary">כניסה מהירה</button>
+</div></div>
 
-const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x9ed8ff);
-scene.fog=new THREE.Fog(0x9ed8ff,18,48);
+<div id="login" class="screen hidden"><div class="card">
+ <div class="logo">🎟️</div><h1>כניסה</h1><p>היכנס כדי להתחיל לנהל את הפארק.</p>
+ <input id="name" placeholder="שם השחקן">
+ <input id="pass" type="password" placeholder="סיסמה">
+ <button id="loginBtn">כניסה</button><button id="backWelcome" class="secondary">חזרה</button>
+</div></div>
 
-const camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,.1,100);
-camera.position.set(0,17,16); camera.lookAt(0,0,0);
+<div id="settings" class="screen hidden"><div class="card">
+ <div class="logo">⚙️</div><h1>הגדרות</h1>
+ <button id="reset" class="secondary">איפוס המשחק</button>
+ <button id="closeSettings">חזרה למשחק</button>
+</div></div>
 
-const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
-renderer.setSize(innerWidth,innerHeight);
-renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-document.getElementById('game').appendChild(renderer.domElement);
+<script>
+const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+document.getElementById('game').appendChild(canvas);
+let W=0,H=0,dpr=1;
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
+addEventListener('resize',resize);resize();
 
-scene.add(new THREE.HemisphereLight(0xffffff,0x5d7650,2.1));
-const sun=new THREE.DirectionalLight(0xffffff,2.2); sun.position.set(-8,18,10); sun.castShadow=true;
-sun.shadow.mapSize.set(1024,1024); scene.add(sun);
+let money=Number(localStorage.parkMoney||500), rides=JSON.parse(localStorage.parkRides||'[]');
+let player={x:0,y:0,dir:0};let playing=false;let last=performance.now();let incomeTimer=0;
+const joy={active:false,sx:0,sy:0,x:0,y:0};
+const toast=t=>{const e=document.getElementById('toast');e.textContent=t;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,1400)};
+function ui(){money=Math.floor(money);document.getElementById('money').textContent=money;document.getElementById('rides').textContent=rides.length}
+function show(id){document.querySelectorAll('.screen').forEach(e=>e.classList.add('hidden'));if(id)document.getElementById(id).classList.remove('hidden')}
+function start(){playing=true;show(null);document.getElementById('hud').classList.remove('hidden');document.getElementById('settingsBtn').classList.remove('hidden');document.getElementById('buildBar').classList.remove('hidden');document.getElementById('joystick').classList.remove('hidden');ui();toast('הפארק שלך מוכן!')}
+document.getElementById('goLogin').onclick=()=>show('login');
+document.getElementById('backWelcome').onclick=()=>show('welcome');
+document.getElementById('guest').onclick=start;
+document.getElementById('loginBtn').onclick=()=>{if(!document.getElementById('name').value.trim()){toast('כתוב שם שחקן');return}start()};
+document.getElementById('settingsBtn').onclick=()=>show('settings');
+document.getElementById('closeSettings').onclick=start;
+document.getElementById('reset').onclick=()=>{if(confirm('לאפס את כל הפארק והכסף?')){money=500;rides=[];localStorage.removeItem('parkMoney');localStorage.removeItem('parkRides');ui();start()}};
 
-const arena=28;
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(arena,arena),new THREE.MeshStandardMaterial({color:0x77bd68,roughness:.9}));
-ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
-
-const grid=new THREE.GridHelper(arena,28,0xffffff,0x9bd38d); grid.position.y=.015; grid.material.transparent=true; grid.material.opacity=.35; scene.add(grid);
-
-function makeCharacter(type){
- const g=new THREE.Group();
- const isMouse=type==='mouse';
- const bodyMat=new THREE.MeshStandardMaterial({color:isMouse?0x9da3ad:0xb8753f,roughness:.82,metalness:0});
- const bellyMat=new THREE.MeshStandardMaterial({color:isMouse?0xe9c8b6:0xf1c7a5,roughness:.9});
- const pinkMat=new THREE.MeshStandardMaterial({color:isMouse?0xf09aa7:0xe5a09a,roughness:.75});
- const darkMat=new THREE.MeshStandardMaterial({color:0x17151a,roughness:.35});
- const whiteMat=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.4});
- const body=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.72:1.05,28,20),bodyMat);
- body.scale.set(isMouse?1.18:1.15,isMouse?.78:.82,isMouse?1.52:1.42); body.position.y=.82; body.castShadow=true; g.add(body);
- const head=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.58:.82,28,20),bodyMat);
- head.position.set(0,isMouse?1.16:1.28,-.82); head.scale.set(1.03,1,1.05); head.castShadow=true; g.add(head);
- const muzzle=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.34:.42,20,14),bellyMat);
- muzzle.scale.set(1,.72,.72); muzzle.position.set(0,isMouse?1.03:1.18,-1.30); muzzle.castShadow=true; g.add(muzzle);
- const nose=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.10:.12,14,10),pinkMat);
- nose.scale.set(1,.75,1); nose.position.set(0,isMouse?1.08:1.22,-1.60); g.add(nose);
- const earMat=isMouse?pinkMat:bodyMat;
- const ears=[];
- for(const x of [-1,1]){
-  const outer=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.28:.34,20,14),bodyMat);
-  outer.scale.set(.72,1,.45); outer.position.set(x*(isMouse?.40:.58),isMouse?1.63:1.82,-.82); outer.castShadow=true; g.add(outer);
-  const inner=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.18:.22,18,12),earMat);
-  inner.scale.set(.72,1,.4); inner.position.set(x*(isMouse?.40:.58),isMouse?1.63:1.82,-1.08); g.add(inner);
-  ears.push(outer);
- }
- const eyes=[];
- for(const x of [-1,1]){
-  const eye=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.105:.13,16,12),darkMat);
-  eye.position.set(x*(isMouse?.23:.31),isMouse?1.30:1.47,-1.38); eye.castShadow=true; g.add(eye);
-  if(isMouse){
-   const glint=new THREE.Mesh(new THREE.SphereGeometry(.035,8,6),whiteMat);
-   glint.position.set(x*.23-.025,1.335,-1.335); g.add(glint);
-  }
-  eyes.push(eye);
- }
- if(isMouse){
-  const whiskerMat=new THREE.LineBasicMaterial({color:0xf6eee8,transparent:true,opacity:.9});
-  for(const side of [-1,1]) for(let i=0;i<3;i++){
-   const y=1.00+i*.07, pts=[new THREE.Vector3(side*.15,y,-1.40),new THREE.Vector3(side*(.72+i*.08),y+(i-1)*.025,-1.43)];
-   const geo=new THREE.BufferGeometry().setFromPoints(pts);
-   g.add(new THREE.Line(geo,whiskerMat));
-  }
- }
- const legs=[];
- const legPositions=isMouse?[[-.42,.55,-.48],[.42,.55,-.48],[-.42,.55,.48],[.42,.55,.48]]:[[-.55,.55,-.55],[.55,.55,-.55],[-.55,.55,.55],[.55,.55,.55]];
- for(const [x,y,z] of legPositions){
-  const leg=new THREE.Mesh(new THREE.CapsuleGeometry(isMouse?.13:.19,.38,6,10),bodyMat);
-  leg.position.set(x,y,z); leg.castShadow=true; g.add(leg);
-  const paw=new THREE.Mesh(new THREE.SphereGeometry(isMouse?.16:.22,14,10),bellyMat);
-  paw.scale.set(1,.55,1.25); paw.position.set(x,y-.22,z-(z<0?.10:-.10)); paw.castShadow=true; g.add(paw);
-  legs.push(leg,paw);
- }
- if(isMouse){
-  const tail=new THREE.Mesh(new THREE.TorusGeometry(.68,.075,10,30,Math.PI*1.55),new THREE.MeshStandardMaterial({color:0xd69c8e,roughness:.8}));
-  tail.rotation.y=Math.PI/2; tail.position.set(0,.62,1.48); tail.castShadow=true; g.add(tail);
-  g.userData.tail=tail;
- }else{
-  const tail=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.95,8,16),bodyMat);
-  tail.position.set(0,1.0,1.55); tail.rotation.x=-.72; tail.castShadow=true; g.add(tail);
-  g.userData.tail=tail;
- }
- g.userData.legs=legs; g.userData.phase=Math.random()*Math.PI*2; g.userData.body=body;
- return g;
+function worldToScreen(x,y){const scale=Math.min(W,H)/29;return [W/2+(x-player.x)*scale,H/2+(y-player.y)*scale]}
+function drawGround(){
+ ctx.fillStyle='#77c86b';ctx.fillRect(0,0,W,H);
+ const scale=Math.min(W,H)/29;
+ for(let x=-18;x<=18;x+=2){let a=worldToScreen(x,-18),b=worldToScreen(x,18);ctx.strokeStyle='#ffffff22';ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()}
+ for(let y=-18;y<=18;y+=2){let a=worldToScreen(-18,y),b=worldToScreen(18,y);ctx.strokeStyle='#ffffff22';ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()}
 }
-const mouse=makeCharacter('mouse'), cat=makeCharacter('cat');
-mouse.position.set(0,0,5); cat.position.set(-7,0,-5); scene.add(mouse,cat);
-
-const cheeseGroup=new THREE.Group(); scene.add(cheeseGroup);
-const cheeseMat=new THREE.MeshStandardMaterial({color:0xffd21f,roughness:.5});
-function createCheese(x,z){
- const g=new THREE.Group();
- const c=new THREE.Mesh(new THREE.ConeGeometry(.62,.42,3),cheeseMat);
- c.rotation.x=Math.PI/2; c.rotation.z=Math.PI/6; c.position.y=.45; c.castShadow=true; g.add(c);
- const holes=new THREE.Mesh(new THREE.SphereGeometry(.11,8,6),new THREE.MeshStandardMaterial({color:0xd39b0b}));
- holes.scale.set(1,.35,.6); holes.position.set(.12,.5,-.25); g.add(holes);
- g.position.set(x,0,z); g.userData.spin=Math.random()*Math.PI*2; cheeseGroup.add(g);
- return g;
+function drawRide(r){
+ const [x,y]=worldToScreen(r.x,r.y),s=Math.min(W,H)/29;
+ ctx.save();ctx.translate(x,y);ctx.font=(2*s)+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.beginPath();ctx.arc(0,0,1.05*s,0,Math.PI*2);ctx.fillStyle='#ffffffcc';ctx.fill();
+ ctx.fillText(r.icon,0,0);ctx.font='bold '+(.55*s)+'px Arial';ctx.fillStyle='#26384d';ctx.fillText(r.name,0,1.55*s);ctx.restore();
 }
-let cheeses=[];
-function respawnCheeses(){
- cheeses.forEach(c=>cheeseGroup.remove(c)); cheeses=[];
- const pts=[[-8,-7],[7,-7],[-9,1],[8,2],[-4,8],[4,7],[0,-8],[10,8]];
- pts.forEach(p=>cheeses.push(createCheese(p[0],p[1])));
+function drawPlayer(){
+ const [x,y]=worldToScreen(player.x,player.y),s=Math.min(W,H)/29;
+ ctx.save();ctx.translate(x,y);ctx.rotate(player.dir);
+ ctx.beginPath();ctx.ellipse(0,.35*s,.48*s,.7*s,0,0,Math.PI*2);ctx.fillStyle='#2469b0';ctx.fill();
+ ctx.beginPath();ctx.arc(0,-.38*s,.48*s,0,Math.PI*2);ctx.fillStyle='#f0b68d';ctx.fill();
+ ctx.fillStyle='#333';ctx.beginPath();ctx.arc(-.16*s,-.42*s,.06*s,0,7);ctx.arc(.16*s,-.42*s,.06*s,0,7);ctx.fill();
+ ctx.fillStyle='#fff';ctx.fillRect(-.28*s,.05*s,.56*s,.16*s);ctx.restore();
 }
-respawnCheeses();
-
-let playing=false,score=0, best=Number(localStorage.catEscapeBest||0);
-document.getElementById('best').textContent=best;
-
-const keys={};
-const joystick=document.getElementById('joystick');
-let joystickActive=false;
-let touchStartX=0,touchStartY=0;
-const joystickVector=new THREE.Vector2();
-
-function updateJoystick(e){
- const dx=e.clientX-touchStartX, dy=e.clientY-touchStartY;
- const max=70, len=Math.hypot(dx,dy);
- const scale=len>max?max/len:1;
- joystickVector.set((dx*scale)/max,(dy*scale)/max);
+function draw(){
+ if(!playing){requestAnimationFrame(draw);return}
+ drawGround();rides.forEach(drawRide);drawPlayer();
+ const scale=Math.min(W,H)/29;
+ const [px,py]=worldToScreen(player.x,player.y);
+ ctx.fillStyle='#fff';ctx.font='bold '+(.42*scale)+'px Arial';ctx.textAlign='center';ctx.fillText('אתה',px,py+1.25*scale);
 }
-function resetJoystick(){joystickActive=false;joystickVector.set(0,0);}
-joystick.addEventListener('pointerdown',e=>{
- if(!playing)return;
- joystickActive=true;
- touchStartX=e.clientX; touchStartY=e.clientY;
- joystickVector.set(0,0);
- joystick.setPointerCapture(e.pointerId);
-});
-joystick.addEventListener('pointermove',e=>{if(joystickActive&&playing)updateJoystick(e);});
-joystick.addEventListener('pointerup',resetJoystick);
-joystick.addEventListener('pointercancel',resetJoystick);
-
-addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);
-addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-
-
-
-const clock=new THREE.Clock();
-function animate(){
- requestAnimationFrame(animate);
- const dt=Math.min(clock.getDelta(),.035);
+function tick(now){
+ const dt=Math.min((now-last)/1000,.04);last=now;
  if(playing){
-  const move=new THREE.Vector3();
-  if(keys.w||keys.arrowup)move.z-=1;
-  if(keys.s||keys.arrowdown)move.z+=1;
-  if(keys.a||keys.arrowleft)move.x-=1;
-  if(keys.d||keys.arrowright)move.x+=1;
-  if(joystickActive && joystickVector.lengthSq()>0.0025){
-   move.x=joystickVector.x;
-   move.z=joystickVector.y;
-  }
-  const moving=move.lengthSq()>0.0025;
-  if(moving){
-   move.normalize();
-   const speed=5.2;
-   mouse.position.addScaledVector(move,speed*dt);
-   mouse.rotation.y=Math.atan2(-move.x,-move.z);
-   const runTime=performance.now()*.018;
-   const swing=Math.sin(runTime)*.55;
-   const legs=mouse.userData.legs||[];
-   for(let i=0;i<legs.length;i+=2){
-    const dir=(i===0||i===4)?1:-1;
-    legs[i].rotation.x=swing*dir;
-    legs[i+1].rotation.x=swing*dir;
-   }
-   mouse.userData.body.position.y=.82+Math.abs(Math.sin(runTime*2))*.035;
-   mouse.userData.tail.rotation.z=Math.sin(runTime*.8)*.12;
-  }else{
-   const legs=mouse.userData.legs||[];
-   for(let i=0;i<legs.length;i+=2){legs[i].rotation.x=0;legs[i+1].rotation.x=0;}
-   mouse.userData.body.position.y=.82+Math.sin(performance.now()*.003)*.008;
-  }
-  mouse.position.x=THREE.MathUtils.clamp(mouse.position.x,-12.5,12.5);
-  mouse.position.z=THREE.MathUtils.clamp(mouse.position.z,-12.5,12.5);
-  const chase=mouse.position.clone().sub(cat.position);chase.y=0;
-  if(chase.length()>.02){
-   chase.normalize();
-   const catSpeed=3.35;
-   cat.position.addScaledVector(chase,catSpeed*dt);
-   cat.rotation.y=Math.atan2(chase.x,-chase.z);
-   const catTime=performance.now()*.014;
-   const catSwing=Math.sin(catTime)*.42;
-   const catLegs=cat.userData.legs||[];
-   for(let i=0;i<catLegs.length;i+=2){
-    const dir=(i===0||i===4)?1:-1;
-    catLegs[i].rotation.x=catSwing*dir;
-    catLegs[i+1].rotation.x=catSwing*dir;
-   }
-   cat.userData.body.position.y=1.05+Math.abs(Math.sin(catTime*2))*.045;
-   cat.userData.tail.rotation.z=Math.sin(catTime*.9)*.16;
-  }
-  for(const c of cheeses){
-   c.rotation.y+=dt*1.5;
-   if(c.visible && c.position.distanceTo(mouse.position)<1.05){
-    c.visible=false;score++;document.getElementById('score').textContent=score;
-    setTimeout(()=>{c.position.set((Math.random()-.5)*23,0,(Math.random()-.5)*23);c.visible=true;},850);
-   }
-  }
-  if(cat.position.distanceTo(mouse.position)<1.15)endGame();
+  const dx=joy.x,dy=joy.y;
+  if(Math.hypot(dx,dy)>.08){const sp=4.2;player.x+=dx*sp*dt;player.y+=dy*sp*dt;player.dir=Math.atan2(dy,dx)+Math.PI/2}
+  player.x=Math.max(-13,Math.min(13,player.x));player.y=Math.max(-13,Math.min(13,player.y));
+  incomeTimer+=dt;if(incomeTimer>=5){incomeTimer=0;const gain=rides.length*12;money+=gain;localStorage.parkMoney=money;if(gain)toast('הפארק הרוויח $'+gain);ui()}
  }
- renderer.render(scene,camera);
+ requestAnimationFrame(tick)
 }
-function startGame(){
- score=0;document.getElementById('score').textContent=0;cat.position.set(-7,0,-5);mouse.position.set(0,0,5);joystickVector.set(0,0);joystickActive=false;
- cheeses.forEach(c=>c.visible=true);playing=true;
- document.getElementById('start').classList.add('hidden');document.getElementById('gameover').classList.add('hidden');
- document.getElementById('hint').textContent='הזז את האצבע בפינה כדי להזיז את העכבר';
-}
-function endGame(){
- if(!playing)return;playing=false;
- best=Math.max(best,score);localStorage.catEscapeBest=best;document.getElementById('best').textContent=best;
- document.getElementById('finalScore').textContent=score;document.getElementById('gameover').classList.remove('hidden');
-}
-document.getElementById('startBtn').onclick=startGame;document.getElementById('restartBtn').onclick=startGame;
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
-animate();
+requestAnimationFrame(tick);requestAnimationFrame(draw);
+
+const joyEl=document.getElementById('joystick'),knob=document.getElementById('joyKnob');
+function joyMove(e){const max=55,dx=e.clientX-joy.sx,dy=e.clientY-joy.sy,l=Math.hypot(dx,dy),k=l>max?max/l:1;joy.x=dx*k/max;joy.y=dy*k/max;knob.style.transform='translate('+dx*k+'px,'+dy*k+'px)'}
+function joyReset(){joy.active=false;joy.x=joy.y=0;knob.style.transform='translate(0,0)'}
+joyEl.addEventListener('pointerdown',e=>{if(!playing)return;joy.active=true;joy.sx=e.clientX;joy.sy=e.clientY;joy.x=joy.y=0;joyEl.setPointerCapture(e.pointerId)});
+joyEl.addEventListener('pointermove',e=>{if(joy.active)joyMove(e)});joyEl.addEventListener('pointerup',joyReset);joyEl.addEventListener('pointercancel',joyReset);
+
+document.querySelectorAll('.build').forEach(btn=>btn.onclick=()=>{
+ if(!playing)return;const cost=Number(btn.dataset.cost);
+ if(money<cost){toast('אין מספיק כסף');return}
+ const x=player.x+Math.cos(player.dir-Math.PI/2)*2.2,y=player.y+Math.sin(player.dir-Math.PI/2)*2.2;
+ const data={carousel:['🎠','קרוסלה'],swing:['🎡','נדנדה'],coaster:['🎢','רכבת הרים'],food:['🍔','דוכן אוכל']}[btn.dataset.kind];
+ money-=cost;rides.push({x,y,icon:data[0],name:data[1]});localStorage.parkMoney=money;localStorage.parkRides=JSON.stringify(rides);ui();toast('נבנה: '+data[1]);
+});
 </script>
 </body>
 </html>
