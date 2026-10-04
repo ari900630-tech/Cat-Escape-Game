@@ -77,10 +77,7 @@ function makeConstructionSite(i){
  const [x,z]=constructionSites[i],g=new THREE.Group();g.position.set(x,.03,z);
  const pad=new THREE.Mesh(new THREE.PlaneGeometry(4.2,4.2),new THREE.MeshStandardMaterial({color:0xf2c94c,roughness:1,side:THREE.DoubleSide}));
  pad.rotation.x=-Math.PI/2;pad.position.y=.07;g.add(pad);
- const base=new THREE.Mesh(new THREE.CylinderGeometry(2.1,.1,16),new THREE.MeshStandardMaterial({color:0xd7a52b,roughness:.8}));
- base.scale.y=.35;g.add(base);
- const ring=new THREE.Mesh(new THREE.TorusGeometry(2.05,.07,8,32),new THREE.MeshStandardMaterial({color:0x6b4b16}));
- g.add(ring);
+
  const cv=document.createElement("canvas");cv.width=512;cv.height=128;const ctx=cv.getContext("2d");ctx.fillStyle="#172b3c";ctx.fillRect(0,0,512,128);ctx.fillStyle="#fff";ctx.font="bold 36px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("אתר בנייה "+(i+1),256,64);
  const tx=new THREE.CanvasTexture(cv);const board=new THREE.Mesh(new THREE.PlaneGeometry(3,.75),new THREE.MeshBasicMaterial({map:tx}));board.position.y=2.3;g.add(board);siteLabels[i]={ctx,tx};
  const pc=document.createElement("canvas");pc.width=512;pc.height=160;const px=pc.getContext("2d");px.fillStyle="#fff8c9";px.fillRect(0,0,512,160);px.fillStyle="#4a3500";px.font="bold 58px Arial";px.textAlign="center";px.textBaseline="middle";px.fillText("$"+constructionCosts[i],256,80);const ptx=new THREE.CanvasTexture(pc);const priceMat=new THREE.MeshBasicMaterial({map:ptx,transparent:true,side:THREE.DoubleSide});const price=new THREE.Mesh(new THREE.PlaneGeometry(2.8,.88),priceMat);price.rotation.x=-Math.PI/2;price.position.y=.1;g.add(price);scene.add(g);return g
