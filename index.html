@@ -38,7 +38,7 @@ const hemi=new THREE.HemisphereLight(0xcfefff,0x5b6b45,2.1);scene.add(hemi);
 const sun=new THREE.DirectionalLight(0xfff4d6,3.2);sun.position.set(-25,40,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-45;sun.shadow.camera.right=45;sun.shadow.camera.top=45;sun.shadow.camera.bottom=-45;scene.add(sun);
 
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(110,110),new THREE.MeshStandardMaterial({color:0x5b9b55,roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
-function box(w,h,d,c,x,y,z,rough=.75){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:c,roughness:rough});m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;scene.add(m);return m}
+function box(w,h,d,c,x,y,z,rough=.75){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:c,roughness:rough}));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;scene.add(m);return m}
 function cyl(r,h,c,x,y,z){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,24),new THREE.MeshStandardMaterial({color:c,roughness:.65}));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;scene.add(m);return m}
 function tree(x,z){cyl(.18,2.2,0x66513a,x,1.1,z);const a=new THREE.Mesh(new THREE.SphereGeometry(1.15,18,14),new THREE.MeshStandardMaterial({color:0x2e783b,roughness:1}));a.position.set(x,2.6,z);a.castShadow=true;scene.add(a);const b=new THREE.Mesh(new THREE.SphereGeometry(.8,16,12),new THREE.MeshStandardMaterial({color:0x3d8c47,roughness:1}));b.position.set(x+.45,2.85,z+.15);b.castShadow=true;scene.add(b)}
 function path(w,d,x,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,.035,d),new THREE.MeshStandardMaterial({color:0xb8a98f,roughness:.9}));m.position.set(x,.02,z);m.receiveShadow=true;scene.add(m)}
@@ -66,7 +66,7 @@ function ui(){document.getElementById("money").textContent=Math.floor(money);doc
 function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,1500)}
 function show(id){document.querySelectorAll(".screen").forEach(e=>e.classList.add("hidden"));if(id)document.getElementById(id).classList.remove("hidden")}
 function start(){playing=true;show(null);["hud","settingsBtn","buildBar","joystick"].forEach(id=>document.getElementById(id).classList.remove("hidden"));ui();toast("הפארק שלך מוכן")}
-document.getElementById("goLogin").onclick=()=>show("login");document.getElementById("backWelcome").onclick=()=>show("welcome");document.getElementById("guest").onclick=start);
+document.getElementById("goLogin").onclick=()=>show("login");document.getElementById("backWelcome").onclick=()=>show("welcome");document.getElementById("guest").onclick=start;
 document.getElementById("loginBtn").onclick=()=>{if(!document.getElementById("name").value.trim()){toast("כתוב שם שחקן");return}start()};document.getElementById("settingsBtn").onclick=()=>show("settings");document.getElementById("closeSettings").onclick=start;
 document.getElementById("reset").onclick=()=>{if(confirm("לאפס את כל הפארק והכסף?")){money=500;localStorage.removeItem("parkMoney");localStorage.removeItem("parkRides");rebuild();ui();start()}};
 
