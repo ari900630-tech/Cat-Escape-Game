@@ -81,9 +81,9 @@ else if(k==="waterpark"){g.add(box(4,.3,3,0x3e91bd,0,.2,0,.6));const slide=box(.
  const ring=new THREE.Mesh(new THREE.TorusGeometry(2.05,.07,8,32),new THREE.MeshStandardMaterial({color:0x6b4b16}));
  g.add(ring);
  const cv=document.createElement("canvas");cv.width=512;cv.height=128;const ctx=cv.getContext("2d");ctx.fillStyle="#172b3c";ctx.fillRect(0,0,512,128);ctx.fillStyle="#fff";ctx.font="bold 36px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("אתר בנייה "+(i+1),256,64);
- const tx=new THREE.CanvasTexture(cv);const board=new THREE.Mesh(new THREE.PlaneGeometry(3,.75),new THREE.MeshBasicMaterial({map:tx}));board.position.y=2.3;g.add(board);scene.add(g);return g
+ const tx=new THREE.CanvasTexture(cv);const board=new THREE.Mesh(new THREE.PlaneGeometry(3,.75),new THREE.MeshBasicMaterial({map:tx}));board.position.y=2.3;g.add(board);siteLabels[i]={ctx,tx};scene.add(g);return g
 }
-const siteObjects=constructionSites.map((_,i)=>makeConstructionSite(i));
+const siteLabels=[];const siteObjects=constructionSites.map((_,i)=>makeConstructionSite(i));
 function makeBuilder(i){
  const g=new THREE.Group();const body=new THREE.Mesh(new THREE.CapsuleGeometry(.2,.55,5,8),new THREE.MeshStandardMaterial({color:0xe7a51d,roughness:.8}));body.position.y=.65;g.add(body);
  const head=new THREE.Mesh(new THREE.SphereGeometry(.2,10,8),new THREE.MeshStandardMaterial({color:0xe3a47e}));head.position.y=1.25;g.add(head);
@@ -146,7 +146,7 @@ buyBuilder.onclick=()=>{if(money<250)return toast("אין מספיק כסף לב
  const site=nearestOpenSite();
  if(site<0)return toast("לך קודם לאתר הבנייה המסומן");
  if(site>nextSite)return toast("צריך לפתוח את אתר הבנייה הקודם");
- const cost=+b.dataset.cost;if(money<cost)return toast("אין מספיק כסף");
+ const cost=+b.dataset.cost;if(money<cost)return toast("אין מספיק כסף"); if(siteLabels[site]){const q=siteLabels[site];q.ctx.fillStyle="#172b3c";q.ctx.fillRect(0,0,512,128);q.ctx.fillStyle="#fff";q.ctx.font="bold 34px Arial";q.ctx.textAlign="center";q.ctx.textBaseline="middle";q.ctx.fillText("עלות: $"+cost,256,64);q.tx.needsUpdate=true;}
  const [x,z]=constructionSites[site],times={carousel:7,wheel:13,coaster:18,food:5,boats:11,bumper:9,drop:15,waterpark:12,pirate:10,ghost:14,train:8,shop:6};
  if(Math.hypot(player.x-x,player.z-z)>2.25)return toast("עלה על הריבוע הצהוב כדי להתחיל את הבנייה");
  const r={kind:b.dataset.kind,x,z,building:true,buildTime:times[b.dataset.kind]||10,cost};
