@@ -139,7 +139,7 @@ function startConstruction(r){
   const flowMat=new THREE.MeshStandardMaterial({color:0xffd21f,metalness:.65,roughness:.18,emissive:0xff9d00,emissiveIntensity:.8});
   for(let i=0;i<14;i++){const c=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.06,16),flowMat);c.rotation.x=Math.PI/2;c.position.set(0,.8,0);moneyFlow.add(c)}
   const flowGlow=new THREE.Mesh(new THREE.SphereGeometry(.32,12,8),new THREE.MeshBasicMaterial({color:0xffe56b,transparent:true,opacity:.9}));flowGlow.name="flowGlow";moneyFlow.add(flowGlow);
-  pay.add(moneyFlow);r.moneyFlow=moneyFlow;
+  scene.add(moneyFlow);r.moneyFlow=moneyFlow;
   const barBg=new THREE.Mesh(new THREE.BoxGeometry(3,.18,.18),new THREE.MeshBasicMaterial({color:0x333333}));
   barBg.position.set(0,2.8,0);pay.add(barBg);
   const bar=new THREE.Mesh(new THREE.BoxGeometry(0.02,.2,.2),new THREE.MeshBasicMaterial({color:0x31d17c}));
@@ -154,7 +154,7 @@ function startConstruction(r){
 }
 function finishConstruction(r){
  r.building=false;r.obj.visible=true;
- if(r.payment){r.payment.parent.remove(r.payment);r.payment=null}
+ if(r.payment){r.payment.parent.remove(r.payment);r.payment=null} if(r.moneyFlow){r.moneyFlow.parent.remove(r.moneyFlow);r.moneyFlow=null}
  constructionCamera=null;
  if(r.builder){r.builder.job=null;r.builder=null}
  localStorage.parkRides=JSON.stringify(park.map(({obj,...q})=>q));
