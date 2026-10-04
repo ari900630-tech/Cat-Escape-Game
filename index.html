@@ -11,7 +11,7 @@ canvas{display:block}
 .hud{position:fixed;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:3}
 .badge{background:rgba(15,22,38,.82);color:#fff;border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);padding:10px 14px;border-radius:16px;font-weight:700;box-shadow:0 8px 24px #0004}
 #hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:4;color:#fff;background:rgba(15,22,38,.78);padding:10px 16px;border-radius:999px;font-size:14px;pointer-events:none;transition:.3s}
-#joystick{position:fixed;bottom:24px;left:24px;width:118px;height:118px;border-radius:50%;background:#ffffff18;border:2px solid #ffffff30;display:none;z-index:5;pointer-events:none}
+#joystick{position:fixed;bottom:24px;left:24px;width:118px;height:118px;border-radius:50%;background:#ffffff18;border:2px solid #ffffff30;display:block;z-index:5;pointer-events:auto;touch-action:none}
 #stick{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px;border-radius:50%;background:#fff9;box-shadow:0 4px 14px #0004}
 .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#111827eF,#172554eF);z-index:10;padding:24px}
 .panel{width:min(430px,100%);text-align:center;background:#fffffffa;border-radius:28px;padding:30px 24px;box-shadow:0 24px 80px #0008}
@@ -131,21 +131,28 @@ let playing=false,score=0, best=Number(localStorage.catEscapeBest||0);
 document.getElementById('best').textContent=best;
 
 const keys={};
+const joystick=document.getElementById('joystick'), stick=document.getElementById('stick');
+let joystickActive=false;
+function updateJoystick(e){
+ const r=joystick.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+ let dx=e.clientX-cx, dy=e.clientY-cy, max=35, len=Math.hypot(dx,dy);
+ if(len>max){dx=dx/len*max;dy=dy/len*max;}
+ stick.style.transform='translate('+dx+'px,'+dy+'px)';
+ const power=Math.min(Math.hypot(dx,dy)/max,1);
+ if(power>.05){
+  const move=new THREE.Vector3(dx/max,0,dy/max);
+  target.copy(mouse.position).add(move.normalize().multiplyScalar(3+power*2.5));
+ }
+}
+function resetJoystick(){joystickActive=false;stick.style.transform='translate(0,0)';}
+joystick.addEventListener('pointerdown',e=>{if(!playing)return;joystickActive=true;joystick.setPointerCapture(e.pointerId);updateJoystick(e);});
+joystick.addEventListener('pointermove',e=>{if(joystickActive&&playing)updateJoystick(e);});
+joystick.addEventListener('pointerup',resetJoystick);
+joystick.addEventListener('pointercancel',resetJoystick);
 addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);
 addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 
-let pointerActive=false;
-function pointerToWorld(e){
- const r=renderer.domElement.getBoundingClientRect();
- const nx=(e.clientX-r.left)/r.width*2-1, ny=-(e.clientY-r.top)/r.height*2+1;
- const ray=new THREE.Raycaster(); ray.setFromCamera(new THREE.Vector2(nx,ny),camera);
- const plane=new THREE.Plane(new THREE.Vector3(0,1,0),0), p=new THREE.Vector3();
- ray.ray.intersectPlane(plane,p);
- target.set(THREE.MathUtils.clamp(p.x,-12.5,12.5),0,THREE.MathUtils.clamp(p.z,-12.5,12.5));
-}
-renderer.domElement.addEventListener('pointerdown',e=>{if(!playing)return;pointerActive=true;pointerToWorld(e);});
-renderer.domElement.addEventListener('pointermove',e=>{if(pointerActive&&playing)pointerToWorld(e);});
-addEventListener('pointerup',()=>pointerActive=false);
+
 
 const clock=new THREE.Clock();
 function animate(){
@@ -176,7 +183,7 @@ function startGame(){
  score=0;document.getElementById('score').textContent=0;cat.position.set(-7,0,-5);mouse.position.set(0,0,5);target.copy(mouse.position);
  cheeses.forEach(c=>c.visible=true);playing=true;
  document.getElementById('start').classList.add('hidden');document.getElementById('gameover').classList.add('hidden');
- document.getElementById('hint').textContent='גרור את האצבע כדי להזיז את העכבר';
+ document.getElementById('hint').textContent='השתמש בג׳ויסטיק בפינה כדי שהאצבע לא תסתיר את העכבר';
 }
 function endGame(){
  if(!playing)return;playing=false;
