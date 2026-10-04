@@ -3,135 +3,81 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>בונה פארק</title>
+<title>בונה פארק 3D</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#10233a;font-family:Arial,sans-serif;touch-action:none}
-#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
-.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(150deg,#10233af2,#244e69f2);z-index:30}
-.card{width:min(430px,100%);background:#fff;border-radius:28px;padding:28px 22px;text-align:center;box-shadow:0 24px 70px #0008}
-.logo{font-size:70px;margin-bottom:5px}.card h1{margin:4px 0 8px;font-size:32px;color:#172437}.card p{color:#647184;line-height:1.5;margin:8px 0 20px}
-button{width:100%;border:0;border-radius:16px;padding:14px;margin:6px 0;font-size:17px;font-weight:800;background:#ffb51b;color:#2a1a00;box-shadow:0 8px 20px #0002}
-button.secondary{background:#eaf0f5;color:#243449}.hidden{display:none!important}
-input{width:100%;border:1px solid #d5dce5;border-radius:14px;padding:14px;margin:6px 0;font-size:16px;text-align:right;outline:0}
-#hud{position:fixed;top:12px;left:12px;right:12px;display:flex;gap:8px;z-index:10;pointer-events:none}
-.badge{background:#10233ae8;color:#fff;border:1px solid #ffffff2c;padding:10px 13px;border-radius:15px;font-weight:800}
-#buildBar{position:fixed;bottom:10px;left:10px;right:10px;z-index:12;display:flex;gap:7px;overflow-x:auto;padding:4px}
-.build{min-width:92px;background:#ffffffef;border-radius:16px;padding:8px;text-align:center;box-shadow:0 8px 24px #0003;pointer-events:auto}
-.build b{display:block;font-size:24px}.build span{font-size:12px;font-weight:700;color:#405065}
-#settingsBtn{position:fixed;top:12px;right:12px;z-index:14;width:auto;padding:10px 13px;margin:0;background:#ffffffea;color:#25364b;box-shadow:0 6px 18px #0003}
-#joystick{position:fixed;left:0;bottom:0;width:210px;height:210px;z-index:15;touch-action:none}
-#joyBase{position:absolute;left:35px;bottom:35px;width:125px;height:125px;border-radius:50%;background:#172b40aa;border:2px solid #ffffff55}
-#joyKnob{position:absolute;left:72px;bottom:72px;width:51px;height:51px;border-radius:50%;background:#ffb51b;border:3px solid #fff;box-shadow:0 5px 16px #0005}
-#toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:20;background:#10233aeF;color:#fff;padding:11px 17px;border-radius:999px;font-weight:700;opacity:0;transition:.2s;pointer-events:none}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#07111c;font-family:Arial,sans-serif;touch-action:none}#game{position:fixed;inset:0}canvas{display:block}
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(145deg,#07111ceF,#173a4feF);z-index:30}.card{width:min(430px,100%);background:#fff;border-radius:28px;padding:28px 22px;text-align:center;box-shadow:0 24px 70px #0009}.logo{font-size:68px}.card h1{margin:4px 0 8px;font-size:32px;color:#172437}.card p{color:#647184;line-height:1.5;margin:8px 0 20px}button{width:100%;border:0;border-radius:16px;padding:14px;margin:6px 0;font-size:17px;font-weight:800;background:#f2ad24;color:#241600;box-shadow:0 8px 20px #0002}button.secondary{background:#eaf0f5;color:#243449}.hidden{display:none!important}input{width:100%;border:1px solid #d5dce5;border-radius:14px;padding:14px;margin:6px 0;font-size:16px;text-align:right;outline:0}
+#hud{position:fixed;top:12px;left:12px;right:12px;display:flex;gap:8px;z-index:10;pointer-events:none}.badge{background:#091a2be8;color:#fff;border:1px solid #ffffff28;padding:10px 13px;border-radius:15px;font-weight:800;backdrop-filter:blur(8px)}#settingsBtn{position:fixed;top:12px;right:12px;z-index:14;width:auto;padding:10px 13px;margin:0;background:#ffffffeF;color:#25364b}
+#buildBar{position:fixed;bottom:10px;left:10px;right:10px;z-index:12;display:flex;gap:7px;overflow-x:auto;padding:4px}.build{min-width:104px;background:#fffffff0;border-radius:16px;padding:8px;text-align:center;box-shadow:0 8px 24px #0004;pointer-events:auto}.build b{display:block;font-size:24px}.build span{font-size:12px;font-weight:700;color:#405065}
+#joystick{position:fixed;left:0;bottom:0;width:210px;height:210px;z-index:15;touch-action:none}#joyBase{position:absolute;left:35px;bottom:35px;width:125px;height:125px;border-radius:50%;background:#071827aa;border:2px solid #ffffff45}#joyKnob{position:absolute;left:72px;bottom:72px;width:51px;height:51px;border-radius:50%;background:#f2ad24;border:3px solid #fff;box-shadow:0 5px 16px #0005}
+#toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:20;background:#091a2bef;color:#fff;padding:11px 17px;border-radius:999px;font-weight:700;opacity:0;transition:.2s;pointer-events:none;white-space:nowrap}
 </style>
 </head>
 <body>
 <div id="game"></div>
-<div id="hud" class="hidden"><div class="badge">💰 כסף: <span id="money">500</span></div><div class="badge">🎢 מתקנים: <span id="rides">0</span></div></div>
-<button id="settingsBtn" class="hidden">⚙️ הגדרות</button>
+<div id="hud" class="hidden"><div class="badge">💰 <span id="money">500</span></div><div class="badge">🎢 <span id="rides">0</span></div></div>
+<button id="settingsBtn" class="hidden">⚙️</button>
 <div id="buildBar" class="hidden">
- <button class="build" data-cost="100" data-kind="carousel"><b>🎠</b><span>קרוסלה · $100</span></button>
- <button class="build" data-cost="180" data-kind="swing"><b>🎡</b><span>נדנדה · $180</span></button>
- <button class="build" data-cost="300" data-kind="coaster"><b>🎢</b><span>רכבת · $300</span></button>
- <button class="build" data-cost="80" data-kind="food"><b>🍔</b><span>דוכן · $80</span></button>
+<button class="build" data-cost="100" data-kind="carousel"><b>🎠</b><span>קרוסלה · $100</span></button>
+<button class="build" data-cost="180" data-kind="wheel"><b>🎡</b><span>גלגל ענק · $180</span></button>
+<button class="build" data-cost="300" data-kind="coaster"><b>🎢</b><span>רכבת הרים · $300</span></button>
+<button class="build" data-cost="80" data-kind="food"><b>🍔</b><span>דוכן אוכל · $80</span></button>
 </div>
-<div id="joystick" class="hidden"><div id="joyBase"></div><div id="joyKnob"></div></div>
-<div id="toast"></div>
+<div id="joystick" class="hidden"><div id="joyBase"></div><div id="joyKnob"></div></div><div id="toast"></div>
+<div id="welcome" class="screen"><div class="card"><div class="logo">🎡</div><h1>בונה פארק 3D</h1><p>בנה פארק שעשועים בתלת־ממד, הסתובב בו ובנה מתקנים אמיתיים.</p><button id="goLogin">כניסה למשחק</button><button id="guest" class="secondary">כניסה מהירה</button></div></div>
+<div id="login" class="screen hidden"><div class="card"><div class="logo">🎟️</div><h1>כניסה</h1><input id="name" placeholder="שם השחקן"><input id="pass" type="password" placeholder="סיסמה"><button id="loginBtn">כניסה</button><button id="backWelcome" class="secondary">חזרה</button></div></div>
+<div id="settings" class="screen hidden"><div class="card"><div class="logo">⚙️</div><h1>הגדרות</h1><button id="reset" class="secondary">איפוס המשחק</button><button id="closeSettings">חזרה למשחק</button></div></div>
 
-<div id="welcome" class="screen"><div class="card">
- <div class="logo">🎡</div><h1>בונה פארק</h1><p>בנה פארק שעשועים משלך, הרוויח כסף מהמבקרים והרחב אותו עם מתקנים חדשים.</p>
- <button id="goLogin">כניסה למשחק</button>
- <button id="guest" class="secondary">כניסה מהירה</button>
-</div></div>
+<script type="module">
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
+const root=document.getElementById("game");
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x9ed8f0);scene.fog=new THREE.Fog(0x9ed8f0,38,105);
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,180);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:"high-performance"});renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;root.appendChild(renderer.domElement);
+const hemi=new THREE.HemisphereLight(0xcfefff,0x5b6b45,2.1);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xfff4d6,3.2);sun.position.set(-25,40,20);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-45;sun.shadow.camera.right=45;sun.shadow.camera.top=45;sun.shadow.camera.bottom=-45;scene.add(sun);
 
-<div id="login" class="screen hidden"><div class="card">
- <div class="logo">🎟️</div><h1>כניסה</h1><p>היכנס כדי להתחיל לנהל את הפארק.</p>
- <input id="name" placeholder="שם השחקן">
- <input id="pass" type="password" placeholder="סיסמה">
- <button id="loginBtn">כניסה</button><button id="backWelcome" class="secondary">חזרה</button>
-</div></div>
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(110,110),new THREE.MeshStandardMaterial({color:0x5b9b55,roughness:1}));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+function box(w,h,d,c,x,y,z,rough=.75){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:c,roughness:rough});m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;scene.add(m);return m}
+function cyl(r,h,c,x,y,z){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h,24),new THREE.MeshStandardMaterial({color:c,roughness:.65}));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;scene.add(m);return m}
+function tree(x,z){cyl(.18,2.2,0x66513a,x,1.1,z);const a=new THREE.Mesh(new THREE.SphereGeometry(1.15,18,14),new THREE.MeshStandardMaterial({color:0x2e783b,roughness:1}));a.position.set(x,2.6,z);a.castShadow=true;scene.add(a);const b=new THREE.Mesh(new THREE.SphereGeometry(.8,16,12),new THREE.MeshStandardMaterial({color:0x3d8c47,roughness:1}));b.position.set(x+.45,2.85,z+.15);b.castShadow=true;scene.add(b)}
+function path(w,d,x,z){const m=new THREE.Mesh(new THREE.BoxGeometry(w,.035,d),new THREE.MeshStandardMaterial({color:0xb8a98f,roughness:.9}));m.position.set(x,.02,z);m.receiveShadow=true;scene.add(m)}
+path(8,100,0,0);path(100,7,0,0);path(5,45,-14,0);path(5,45,14,0);
+for(let i=-42;i<=42;i+=10){tree(-9,i);tree(9,i)}for(let i=-40;i<=40;i+=10){tree(i,-9);tree(i,9)}
+// entrance
+box(14,2,1,0xe8e0d0,0,2,-45);box(1.1,7,1.4,0xd64c3f,-6.5,3.5,-45);box(1.1,7,1.4,0xd64c3f,6.5,3.5,-45);box(15,1.1,1.5,0x2e5e9e,0,7,-45);box(10,.4,1.8,0xf5d36a,0,5.8,-45);
 
-<div id="settings" class="screen hidden"><div class="card">
- <div class="logo">⚙️</div><h1>הגדרות</h1>
- <button id="reset" class="secondary">איפוס המשחק</button>
- <button id="closeSettings">חזרה למשחק</button>
-</div></div>
+const park=[];let money=Number(localStorage.parkMoney||500);let playing=false;let incomeTimer=0;
+const player={x:0,z:20,rot:0,walk:0};const keys={};const joy={active:false,x:0,y:0,sx:0,sy:0};
+const playerGroup=new THREE.Group();scene.add(playerGroup);
+const body=new THREE.Mesh(new THREE.CapsuleGeometry(.42,1.05,6,12),new THREE.MeshStandardMaterial({color:0x2d69a9,roughness:.8}));body.position.y=1.05;body.castShadow=true;playerGroup.add(body);
+const head=new THREE.Mesh(new THREE.SphereGeometry(.38,20,16),new THREE.MeshStandardMaterial({color:0xe7ad83,roughness:.9}));head.position.y=2.05;head.castShadow=true;playerGroup.add(head);
+const hair=new THREE.Mesh(new THREE.SphereGeometry(.4,20,12,0,Math.PI*2,0,Math.PI*.48),new THREE.MeshStandardMaterial({color:0x35271f,roughness:1}));hair.position.y=2.13;hair.castShadow=true;playerGroup.add(hair);
+function makeRide(kind,x,z){
+ const g=new THREE.Group();g.position.set(x,0,z);
+ if(kind==="carousel"){cyl(2.2,.35,0xc94e42,0,.18,0);cyl(.28,3.1,0xf0c64c,0,1.7,0);for(let i=0;i<8;i++){const a=i*Math.PI/4;const p=box(.45,1.15,.65,[0x2e6aa6,0xe8b83e,0xd94d43,0x4d9b61][i%4],Math.cos(a)*1.25,.95,Math.sin(a)*1.25,.55);p.rotation.y=-a}const roof=new THREE.Mesh(new THREE.ConeGeometry(2.45,.9,32),new THREE.MeshStandardMaterial({color:0xe8b83e,roughness:.5}));roof.position.y=3.25;roof.castShadow=true;g.add(roof)}
+ else if(kind==="wheel"){const post1=box(.3,5,.3,0x5c6370,-2,2.5,0),post2=box(.3,5,.3,0x5c6370,2,2.5,0);g.add(post1,post2);const wheel=new THREE.Mesh(new THREE.TorusGeometry(3.1,.13,10,48),new THREE.MeshStandardMaterial({color:0xd53f42,metalness:.3,roughness:.5}));wheel.rotation.y=Math.PI/2;wheel.position.y=5.2;wheel.castShadow=true;g.add(wheel);for(let i=0;i<10;i++){const a=i*Math.PI/5;const spoke=box(.08,6.1,.08,0xd53f42,0,5.2,0,.45);spoke.rotation.z=a;spoke.rotation.y=Math.PI/2;g.add(spoke)}}
+ else if(kind==="coaster"){path(5,3,0,0);for(let i=0;i<7;i++){const a=i/6*Math.PI*1.2;const x2=Math.cos(a)*4,z2=Math.sin(a)*4;g.add(box(.18,2,.18,0x555e66,x2,1,z2));}const rail=new THREE.Mesh(new THREE.TorusGeometry(4,.09,8,40,Math.PI*1.2),new THREE.MeshStandardMaterial({color:0xd34b3d,metalness:.4,roughness:.4}));rail.rotation.x=Math.PI/2;rail.position.y=2.1;g.add(rail)}
+ else {box(3.5,2.4,2.5,0xc96d3e,0,1.2,0,.7);box(3.7,.2,2.7,0x6a3928,0,2.5,0,.7);box(1.2,.9,.12,0x25394b,0,1.4,1.28,.4)}
+ scene.add(g);return g}
+function rebuild(){park.forEach(r=>scene.remove(r.obj));park.length=0;const saved=JSON.parse(localStorage.parkRides||"[]");saved.forEach(r=>park.push({...r,obj:makeRide(r.kind,r.x,r.z)}))}
+rebuild();
+function ui(){document.getElementById("money").textContent=Math.floor(money);document.getElementById("rides").textContent=park.length}
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,1500)}
+function show(id){document.querySelectorAll(".screen").forEach(e=>e.classList.add("hidden"));if(id)document.getElementById(id).classList.remove("hidden")}
+function start(){playing=true;show(null);["hud","settingsBtn","buildBar","joystick"].forEach(id=>document.getElementById(id).classList.remove("hidden"));ui();toast("הפארק שלך מוכן")}
+document.getElementById("goLogin").onclick=()=>show("login");document.getElementById("backWelcome").onclick=()=>show("welcome");document.getElementById("guest").onclick=start);
+document.getElementById("loginBtn").onclick=()=>{if(!document.getElementById("name").value.trim()){toast("כתוב שם שחקן");return}start()};document.getElementById("settingsBtn").onclick=()=>show("settings");document.getElementById("closeSettings").onclick=start;
+document.getElementById("reset").onclick=()=>{if(confirm("לאפס את כל הפארק והכסף?")){money=500;localStorage.removeItem("parkMoney");localStorage.removeItem("parkRides");rebuild();ui();start()}};
 
-<script>
-const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
-document.getElementById('game').appendChild(canvas);
-let W=0,H=0,dpr=1;
-function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
-addEventListener('resize',resize);resize();
+document.querySelectorAll(".build").forEach(b=>b.onclick=()=>{if(!playing)return;const cost=Number(b.dataset.cost);if(money<cost){toast("אין מספיק כסף");return}const a=player.rot;const x=Math.round((player.x+Math.sin(a)*5)*2)/2,z=Math.round((player.z+Math.cos(a)*5)*2)/2;const r={kind:b.dataset.kind,x,z};money-=cost;park.push({...r,obj:makeRide(r.kind,x,z)});localStorage.parkMoney=money;localStorage.parkRides=JSON.stringify(park.map(({obj,...q})=>q));ui();toast("המתקן נבנה")});
 
-let money=Number(localStorage.parkMoney||500), rides=JSON.parse(localStorage.parkRides||'[]');
-let player={x:0,y:0,dir:0};let playing=false;let last=performance.now();let incomeTimer=0;
-const joy={active:false,sx:0,sy:0,x:0,y:0};
-const toast=t=>{const e=document.getElementById('toast');e.textContent=t;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,1400)};
-function ui(){money=Math.floor(money);document.getElementById('money').textContent=money;document.getElementById('rides').textContent=rides.length}
-function show(id){document.querySelectorAll('.screen').forEach(e=>e.classList.add('hidden'));if(id)document.getElementById(id).classList.remove('hidden')}
-function start(){playing=true;show(null);document.getElementById('hud').classList.remove('hidden');document.getElementById('settingsBtn').classList.remove('hidden');document.getElementById('buildBar').classList.remove('hidden');document.getElementById('joystick').classList.remove('hidden');ui();toast('הפארק שלך מוכן!')}
-document.getElementById('goLogin').onclick=()=>show('login');
-document.getElementById('backWelcome').onclick=()=>show('welcome');
-document.getElementById('guest').onclick=start;
-document.getElementById('loginBtn').onclick=()=>{if(!document.getElementById('name').value.trim()){toast('כתוב שם שחקן');return}start()};
-document.getElementById('settingsBtn').onclick=()=>show('settings');
-document.getElementById('closeSettings').onclick=start;
-document.getElementById('reset').onclick=()=>{if(confirm('לאפס את כל הפארק והכסף?')){money=500;rides=[];localStorage.removeItem('parkMoney');localStorage.removeItem('parkRides');ui();start()}};
-
-function worldToScreen(x,y){const scale=Math.min(W,H)/29;return [W/2+(x-player.x)*scale,H/2+(y-player.y)*scale]}
-function drawGround(){
- ctx.fillStyle='#77c86b';ctx.fillRect(0,0,W,H);
- const scale=Math.min(W,H)/29;
- for(let x=-18;x<=18;x+=2){let a=worldToScreen(x,-18),b=worldToScreen(x,18);ctx.strokeStyle='#ffffff22';ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()}
- for(let y=-18;y<=18;y+=2){let a=worldToScreen(-18,y),b=worldToScreen(18,y);ctx.strokeStyle='#ffffff22';ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()}
-}
-function drawRide(r){
- const [x,y]=worldToScreen(r.x,r.y),s=Math.min(W,H)/29;
- ctx.save();ctx.translate(x,y);ctx.font=(2*s)+'px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
- ctx.beginPath();ctx.arc(0,0,1.05*s,0,Math.PI*2);ctx.fillStyle='#ffffffcc';ctx.fill();
- ctx.fillText(r.icon,0,0);ctx.font='bold '+(.55*s)+'px Arial';ctx.fillStyle='#26384d';ctx.fillText(r.name,0,1.55*s);ctx.restore();
-}
-function drawPlayer(){
- const [x,y]=worldToScreen(player.x,player.y),s=Math.min(W,H)/29;
- ctx.save();ctx.translate(x,y);ctx.rotate(player.dir);
- ctx.beginPath();ctx.ellipse(0,.35*s,.48*s,.7*s,0,0,Math.PI*2);ctx.fillStyle='#2469b0';ctx.fill();
- ctx.beginPath();ctx.arc(0,-.38*s,.48*s,0,Math.PI*2);ctx.fillStyle='#f0b68d';ctx.fill();
- ctx.fillStyle='#333';ctx.beginPath();ctx.arc(-.16*s,-.42*s,.06*s,0,7);ctx.arc(.16*s,-.42*s,.06*s,0,7);ctx.fill();
- ctx.fillStyle='#fff';ctx.fillRect(-.28*s,.05*s,.56*s,.16*s);ctx.restore();
-}
-function draw(){
- if(!playing){requestAnimationFrame(draw);return}
- drawGround();rides.forEach(drawRide);drawPlayer();
- const scale=Math.min(W,H)/29;
- const [px,py]=worldToScreen(player.x,player.y);
- ctx.fillStyle='#fff';ctx.font='bold '+(.42*scale)+'px Arial';ctx.textAlign='center';ctx.fillText('אתה',px,py+1.25*scale);
-}
-function tick(now){
- const dt=Math.min((now-last)/1000,.04);last=now;
- if(playing){
-  const dx=joy.x,dy=joy.y;
-  if(Math.hypot(dx,dy)>.08){const sp=4.2;player.x+=dx*sp*dt;player.y+=dy*sp*dt;player.dir=Math.atan2(dy,dx)+Math.PI/2}
-  player.x=Math.max(-13,Math.min(13,player.x));player.y=Math.max(-13,Math.min(13,player.y));
-  incomeTimer+=dt;if(incomeTimer>=5){incomeTimer=0;const gain=rides.length*12;money+=gain;localStorage.parkMoney=money;if(gain)toast('הפארק הרוויח $'+gain);ui()}
- }
- requestAnimationFrame(tick)
-}
-requestAnimationFrame(tick);requestAnimationFrame(draw);
-
-const joyEl=document.getElementById('joystick'),knob=document.getElementById('joyKnob');
-function joyMove(e){const max=55,dx=e.clientX-joy.sx,dy=e.clientY-joy.sy,l=Math.hypot(dx,dy),k=l>max?max/l:1;joy.x=dx*k/max;joy.y=dy*k/max;knob.style.transform='translate('+dx*k+'px,'+dy*k+'px)'}
-function joyReset(){joy.active=false;joy.x=joy.y=0;knob.style.transform='translate(0,0)'}
-joyEl.addEventListener('pointerdown',e=>{if(!playing)return;joy.active=true;joy.sx=e.clientX;joy.sy=e.clientY;joy.x=joy.y=0;joyEl.setPointerCapture(e.pointerId)});
-joyEl.addEventListener('pointermove',e=>{if(joy.active)joyMove(e)});joyEl.addEventListener('pointerup',joyReset);joyEl.addEventListener('pointercancel',joyReset);
-
-document.querySelectorAll('.build').forEach(btn=>btn.onclick=()=>{
- if(!playing)return;const cost=Number(btn.dataset.cost);
- if(money<cost){toast('אין מספיק כסף');return}
- const x=player.x+Math.cos(player.dir-Math.PI/2)*2.2,y=player.y+Math.sin(player.dir-Math.PI/2)*2.2;
- const data={carousel:['🎠','קרוסלה'],swing:['🎡','נדנדה'],coaster:['🎢','רכבת הרים'],food:['🍔','דוכן אוכל']}[btn.dataset.kind];
- money-=cost;rides.push({x,y,icon:data[0],name:data[1]});localStorage.parkMoney=money;localStorage.parkRides=JSON.stringify(rides);ui();toast('נבנה: '+data[1]);
-});
+function setJoy(e){const dx=e.clientX-joy.sx,dy=e.clientY-joy.sy,max=55,l=Math.hypot(dx,dy),k=l>max?max/l:1;joy.x=dx*k/max;joy.y=dy*k/max;document.getElementById("joyKnob").style.transform="translate("+dx*k+"px,"+dy*k+"px)"}
+const je=document.getElementById("joystick");je.addEventListener("pointerdown",e=>{if(!playing)return;joy.active=true;joy.sx=e.clientX;joy.sy=e.clientY;je.setPointerCapture(e.pointerId);setJoy(e)});je.addEventListener("pointermove",e=>{if(joy.active)setJoy(e)});je.addEventListener("pointerup",()=>{joy.active=false;joy.x=joy.y=0;document.getElementById("joyKnob").style.transform="translate(0,0)"});je.addEventListener("pointercancel",()=>{joy.active=false;joy.x=joy.y=0});
+addEventListener("keydown",e=>keys[e.key.toLowerCase()]=true);addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+function animate(t){requestAnimationFrame(animate);if(playing){let x=joy.x,y=joy.y;if(keys.w||keys.arrowup)y=-1;if(keys.s||keys.arrowdown)y=1;if(keys.a||keys.arrowleft)x=-1;if(keys.d||keys.arrowright)x=1;const l=Math.hypot(x,y);if(l>.05){x/=l;y/=l;const speed=.13;player.x+=x*speed;player.z+=y*speed;player.x=Math.max(-42,Math.min(42,player.x));player.z=Math.max(-40,Math.min(40,player.z));player.rot=Math.atan2(x,y);player.walk+=.22}playerGroup.position.set(player.x,0,player.z);playerGroup.rotation.y=player.rot;body.position.y=1.05+Math.abs(Math.sin(player.walk))*0.045;camera.position.lerp(new THREE.Vector3(player.x+Math.sin(player.rot)*7,5.2,player.z+Math.cos(player.rot)*7),.09);camera.lookAt(player.x,1.25,player.z);incomeTimer+=.016;if(incomeTimer>=5){incomeTimer=0;const gain=park.length*12;if(gain){money+=gain;localStorage.parkMoney=money;ui();toast("הפארק הרוויח $"+gain)}}}renderer.render(scene,camera)}
+animate();
+addEventListener("resize",()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.7))});
+ui();
 </script>
-</body>
-</html>
+</body></html>
