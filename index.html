@@ -144,7 +144,9 @@ function startConstruction(r){
   bar.position.set(-1.49,2.8,.01);bar.name="progress";pay.add(bar);
   site.add(pay);r.payment=pay;
  }
- constructionCamera={x:r.x+7,z:r.z+7,y:5,target:r}; 
+ constructionCamera=null;
+ r.moneyFlowStart={x:player.x,z:player.z};
+ r.moneyFlowEnd={x:r.x,z:r.z}; 
  const free=builders.find(b=>!b.job);
  if(free){free.job=r;free.targetX=r.x;free.targetZ=r.z;}
 }
@@ -159,7 +161,7 @@ function finishConstruction(r){
 function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.opacity=1;clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.opacity=0,1500)}function show(id){document.querySelectorAll(".screen").forEach(e=>e.classList.add("hidden"));if(id)document.getElementById(id).classList.remove("hidden")}function start(){playing=true;show(null);["hud","settingsBtn","buildBar","joystick","flyBtn"].forEach(id=>document.getElementById(id).classList.remove("hidden"));ui();toast("הפארק שלך מוכן")}goLogin.onclick=()=>show("login");backWelcome.onclick=()=>show("welcome");guest.onclick=start;loginBtn.onclick=()=>{if(!name.value.trim()){toast("כתוב שם שחקן");return}start()};const flyBtn=document.getElementById("flyBtn");flyBtn.onclick=()=>{fly=!fly;flyBtn.textContent=fly?"🛬 נחיתה":"✈️ טיסה";toast(fly?"מצב טיסה הופעל":"חזרה לקרקע")};settingsBtn.onclick=()=>show("settings");closeSettings.onclick=start;buyCleaner.onclick=()=>{if(money<180)return toast("אין מספיק כסף למנקה");money-=180;cleaners.push({x:-4+cleaners.length*2,z:10+cleaners.length});localStorage.cleaners=cleaners.length;localStorage.parkMoney=money;ui();toast("מנקה חדש הצטרף לפארק")};
 buyToilet.onclick=()=>{if(money<220)return toast("אין מספיק כסף לשירותים");money-=220;const i=toilets.length;const x=-12+(i%4)*8,z=30+Math.floor(i/4)*6;toilets.push({x,z});box(4,2.8,3,0xe9e9e9,x,1.4,z);box(3.2,2.2,.12,0x66b7e8,x,1.8,z-1.55);sign("🚻 שירותים",x,z-1.7);localStorage.toilets=JSON.stringify(toilets);localStorage.parkMoney=money;ui();toast("שירותים חדשים נבנו בפארק")};
 buyBuilder.onclick=()=>{if(money<250)return toast("אין מספיק כסף לבנאי");money-=250;const b=makeBuilder(builders.length);builders.push(b);localStorage.builders=builders.length;localStorage.parkMoney=money;ui();toast("בנאי חדש הצטרף לפארק")};reset.onclick=()=>{if(confirm("לאפס את כל הפארק והכסף?")){money=500;localStorage.removeItem("parkMoney");localStorage.removeItem("parkRides");localStorage.removeItem("nextBuildSite");localStorage.removeItem("builders");localStorage.removeItem("cleaners");localStorage.removeItem("toilets");nextSite=0;builders.splice(0);cleaners.splice(0);toilets.splice(0);builders.push(makeBuilder(0));rebuild();ui();start()}};document.querySelectorAll(".build").forEach(b=>b.onclick=()=>toast("המתקן באתר הזה קבוע — עלה על השטיח כדי להתחיל אוטומטית"));;function setJoy(e){const dx=e.clientX-joy.sx,dy=e.clientY-joy.sy,max=55,l=Math.hypot(dx,dy),q=l>max?max/l:1;joy.x=dx*q/max;joy.y=dy*q/max;joyKnob.style.transform="translate("+dx*q+"px,"+dy*q+"px)"}joystick.onpointerdown=e=>{if(!playing)return;joy.active=true;joy.sx=e.clientX;joy.sy=e.clientY;joystick.setPointerCapture(e.pointerId);setJoy(e)};joystick.onpointermove=e=>{if(joy.active)setJoy(e)};joystick.onpointerup=()=>{joy.active=false;joy.x=joy.y=0;joyKnob.style.transform="translate(0,0)"};addEventListener("keydown",e=>keys[e.key.toLowerCase()]=true);addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);let last=performance.now();function animate(t){requestAnimationFrame(animate);const dt=Math.min((t-last)/1000,.05);last=t;if(playing){dayTime=(dayTime+dt*.12)%24;const daylight=Math.max(.18,Math.sin((dayTime-6)/12*Math.PI));sun.intensity=1.1+2.1*daylight;scene.background.setHSL(.55,.45,.18+.45*daylight);scene.fog.color.copy(scene.background);updateBirds(t/1000);updateRoosters(dt,t/1000);updateVisitors(dt,t/1000);updateBuildPrompt();updateBuildArrow();
- park.forEach(r=>{if(r.building){if(r.moneyFlow){const p=Math.min(1,(t/1000-r.buildStart)/r.buildTime);r.moneyFlow.children.forEach((m,i)=>{const q=((p*1.25+i*.11)%1);m.position.x=-2.6+q*5.2;m.position.y=.48+Math.sin((t/90+i))*0.09;m.position.z=Math.sin((t/120+i))*0.12;m.scale.setScalar(.65+Math.sin(q*Math.PI)*.45)});}if(t/1000>=r.buildUntil)finishConstruction(r)}});
+ park.forEach(r=>{if(r.building){if(r.moneyFlow){const p=Math.min(1,(t/1000-r.buildStart)/r.buildTime);const sx=r.moneyFlowStart?.x??r.x,sz=r.moneyFlowStart?.z??r.z,ex=r.moneyFlowEnd?.x??r.x,ez=r.moneyFlowEnd?.z??r.z;r.moneyFlow.children.forEach((m,i)=>{const q=((p*1.15+i*.13)%1);m.position.x=sx+(ex-sx)*q;m.position.y=.75+Math.sin(q*Math.PI)*1.15+Math.sin(t/120+i)*.08;m.position.z=sz+(ez-sz)*q; m.rotation.y=t/220+i; m.scale.setScalar(.55+Math.sin(q*Math.PI)*.55)});}if(t/1000>=r.buildUntil)finishConstruction(r)}});
  builders.forEach((b,i)=>{
   if(b.job){
    const r=b.job,dx=r.x-b.x,dz=r.z-b.z,d=Math.hypot(dx,dz);
@@ -171,19 +173,11 @@ buyBuilder.onclick=()=>{if(money<250)return toast("אין מספיק כסף לב
  visitors.forEach((v,i)=>{
   if(v.ride && Math.random()<dt*.055){const sale=3+Math.floor(Math.random()*5);money+=sale;customersBought++;localStorage.parkMoney=money}
  });park.forEach((r,i)=>{if(!r.obj)return;const q=r.obj;if(r.kind==="wheel"){const w=q.children.find(c=>c.geometry&&c.geometry.type==="TorusGeometry");if(w)w.rotation.x+=dt*.9}if(r.kind==="carousel")q.rotation.y+=dt*1.2;if(r.kind==="boats")q.rotation.y+=dt*.35;if(r.kind==="bumper")q.rotation.y+=dt*.18;if(r.kind==="drop"){const cab=q.children[q.children.length-1];if(cab)cab.position.y=4.4+Math.sin(t/1000*1.7+i)*2.2}});let x=joy.x,y=joy.y;if(keys.w||keys.arrowup)y=-1;if(keys.s||keys.arrowdown)y=1;if(keys.a||keys.arrowleft)x=-1;if(keys.d||keys.arrowright)x=1;const l=Math.hypot(x,y);if(l>.05){x/=l;y/=l;const speed=(fly?9:5.8)*dt;player.x+=x*speed;player.z+=y*speed;player.x=Math.max(-42,Math.min(42,player.x));player.z=Math.max(-40,Math.min(40,player.z));player.rot=Math.atan2(x,y);player.walk+=dt*13}if(fly){if(keys[" " ]||keys.q)flyHeight+=8*dt;if(keys.shift)flyHeight-=8*dt;flyHeight=Math.max(3,Math.min(35,flyHeight))}else flyHeight=2;playerGroup.position.set(player.x,fly?flyHeight-2:0,player.z);playerGroup.rotation.y=player.rot;body.position.y=1.05+Math.abs(Math.sin(player.walk))*.045;const distance=fly?16:12,height=fly?flyHeight+5:7;let desired;
- if(constructionCamera){
-  desired=new THREE.Vector3(constructionCamera.x,constructionCamera.y,constructionCamera.z);
-  camera.position.lerp(desired,.06);
-  camera.lookAt(constructionCamera.target.x,1.2,constructionCamera.target.z);
-  if(constructionCamera.target.payment){
-   const p=constructionCamera.target.payment.getObjectByName("progress");
-   if(p){const q=Math.max(.02,Math.min(1,(t/1000-constructionCamera.target.buildStart)/constructionCamera.target.buildTime));p.scale.x=q;p.position.x=-1.5+1.5*q}
-  }
- }else{
+ if(constructionCamera){constructionCamera=null;} {
   desired=new THREE.Vector3(player.x-Math.sin(player.rot)*distance,height,player.z-Math.cos(player.rot)*distance);
   camera.position.lerp(desired,.10);
   camera.lookAt(player.x,fly?flyHeight:1.15,player.z);
- }incomeTimer+=dt;if(incomeTimer>=5){incomeTimer-=5;const activeRides=park.filter(r=>!r.building).length;
+ }park.forEach(r=>{if(r.building&&r.payment){const p=r.payment.getObjectByName("progress");if(p){const q=Math.max(.02,Math.min(1,(t/1000-r.buildStart)/r.buildTime));p.scale.x=q;p.position.x=-1.5+1.5*q}}});incomeTimer+=dt;if(incomeTimer>=5){incomeTimer-=5;const activeRides=park.filter(r=>!r.building).length;
 const visitors=12+park.length*4;
 const baseIncome=18+Math.min(42,Math.floor(visitors*.7));
 const rideIncome=activeRides*7;
